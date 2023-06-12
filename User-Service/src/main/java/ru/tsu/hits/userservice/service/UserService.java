@@ -25,6 +25,7 @@ public class UserService {
     @Transactional
     public UserDto signUp(CreateUpdateUserDto dto) {
         UserEntity userEntity = UserDtoConverter.convertDtoToEntity(dto);
+        userEntity.setRole(Role.valueOf(dto.getRole()));
 
         //check if the user already exists
         if(userRepository.findByEmail(userEntity.getEmail()) != null) {
@@ -37,8 +38,8 @@ public class UserService {
         return UserDtoConverter.convertEntityToDto(userEntity);
     }
 
-    public UserEntity editUser(UserEntity user) {
-        return userRepository.save(user);
+    public void editUser(UserEntity user) {
+        userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
