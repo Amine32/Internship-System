@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: User-Service
+    env: java
+    buildCommand: mvn clean install
+    startCommand: java -jar User-Service/target/User-Service-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
