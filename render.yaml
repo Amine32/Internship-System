@@ -2,8 +2,9 @@ services:
   - type: web
     name: User-Service
     env: docker
+    buildCommand: mvn clean install
     dockerfilePath: User-Service/Dockerfile
+    startCommand: java -jar User-Service/target/User-Service-0.0.1-SNAPSHOT.jar
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: production
-
