@@ -1,4 +1,4 @@
-package ru.tsu.hits.userservice.configuration;
+package ru.tsu.hits.internshipapplication.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -2,22 +2,22 @@ package ru.tsu.hits.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.tsu.hits.userservice.dto.CreateUpdateGroupDto;
 import ru.tsu.hits.userservice.dto.GroupDto;
-import ru.tsu.hits.userservice.dto.converter.GroupDtoConverter;
 import ru.tsu.hits.userservice.service.GroupService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/groups")
+@RequestMapping("/api/groups")
 @RequiredArgsConstructor
 public class GroupController {
 
     private final GroupService groupService;
 
     @PostMapping
-    public GroupDto createGroup(String groupNumber) {
-        return groupService.createGroup(groupNumber);
+    public GroupDto createGroup(@RequestBody CreateUpdateGroupDto dto) {
+        return groupService.createGroup(dto.getGroupNumber());
     }
 
     @GetMapping

@@ -1,7 +1,6 @@
 package ru.tsu.hits.userservice.dto.converter;
 
 import org.modelmapper.ModelMapper;
-import ru.tsu.hits.userservice.dto.CreateUpdateGroupDto;
 import ru.tsu.hits.userservice.dto.GroupDto;
 import ru.tsu.hits.userservice.dto.UserDto;
 import ru.tsu.hits.userservice.model.GroupEntity;
@@ -18,9 +17,11 @@ public class GroupDtoConverter {
 
         List<UserDto> students = new ArrayList<>();
 
-        group.getStudents().forEach(element -> {
-            students.add(UserDtoConverter.convertEntityToDto(element));
-        });
+        if (group.getStudents() != null) {
+            group.getStudents().forEach(element -> {
+                students.add(UserDtoConverter.convertEntityToDto(element));
+            });
+        }
 
         dto.setStudents(students);
 

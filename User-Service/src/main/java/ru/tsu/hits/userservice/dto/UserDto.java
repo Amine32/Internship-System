@@ -16,4 +16,8 @@ public class UserDto {
     private String role;
 
     private String email;
+
+    private String groupNumber;
+
+    private String companyId;
 }

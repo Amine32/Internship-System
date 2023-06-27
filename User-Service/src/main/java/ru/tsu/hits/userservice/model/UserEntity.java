@@ -28,4 +28,10 @@ public class UserEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private GroupEntity group;
+
+    private String companyId;
+
+    private String positionId;
+
+    private String internshipLocation;
 }
