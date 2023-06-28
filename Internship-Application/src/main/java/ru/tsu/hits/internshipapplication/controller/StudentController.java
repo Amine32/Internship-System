@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.tsu.hits.internshipapplication.dto.StudentDto;
 import ru.tsu.hits.internshipapplication.service.StudentService;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/api/students")
 @RequiredArgsConstructor
@@ -30,8 +32,8 @@ public class StudentController {
     }
 
     @PostMapping("/resume")
-    public ResponseEntity<String> addResume(@RequestParam("file")MultipartFile file) {
-        return studentService.addResume(file);
+    public ResponseEntity<String> addResume(@RequestParam("file")MultipartFile file, HttpServletRequest request) {
+        return studentService.addResume(file, request);
     }
 
     @GetMapping("/resume/{studentId}")

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 import ru.tsu.hits.internshipapplication.dto.StudentDto;
 import ru.tsu.hits.internshipapplication.dto.UserIdDto;
 import ru.tsu.hits.internshipapplication.dto.converter.StudentDtoConverter;
@@ -15,6 +17,7 @@ import ru.tsu.hits.internshipapplication.exception.StudentNotFoundException;
 import ru.tsu.hits.internshipapplication.model.StudentProfile;
 import ru.tsu.hits.internshipapplication.repository.StudentRepository;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @Service
@@ -22,6 +25,7 @@ import java.io.IOException;
 public class StudentService {
 
     private final StudentRepository studentRepository;
+    private final WebClient.Builder webClientBuilder;
 
     @Transactional(readOnly = true)
     public StudentDto getStudentDtoById(String id) {
@@ -34,32 +38,33 @@ public class StudentService {
     }
 
     @Transactional(readOnly = true)
-    public StudentProfile getStudentByToken() {
-        RestTemplate restTemplate = new RestTemplate();
+    public StudentProfile getStudentByToken(HttpServletRequest request) {
 
-        String url = "https://hits-user-service.onrender.com/users/jwt";
+        // Create HttpHeaders instance and set the Authorization header
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", request.getHeader("Authorization"));
 
-        UserIdDto userIdDto = restTemplate.getForObject(url, UserIdDto.class);
+        // Call the validation endpoint
+        UserIdDto userIdDto = webClientBuilder.build()
+                .get()
+                .uri("https://hits-user-service.onrender.com/api/users/jwt")
+                .headers(httpHeaders -> httpHeaders.addAll(headers))
+                .retrieve()
+                .bodyToMono(UserIdDto.class)
+                .block();
+
 
         assert userIdDto != null;
         return studentRepository.getById(userIdDto.getUserId());
     }
 
     @Transactional
-    public ResponseEntity<String> addResume(MultipartFile file) {
-        if(file.isEmpty()) {
+    public ResponseEntity<String> addResume(MultipartFile file, HttpServletRequest request) {
+        if (file.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No file selected for upload");
         }
 
-        RestTemplate restTemplate = new RestTemplate();
-
-        String url = "https://hits-user-service.onrender.com/users/jwt";
-
-        UserIdDto userIdDto = restTemplate.getForObject(url, UserIdDto.class);
-
-        assert userIdDto != null;
-        StudentProfile studentProfile = studentRepository.getById(userIdDto.getUserId());
-
+        StudentProfile studentProfile = getStudentByToken(request);
 
         try {
             studentProfile.setResume(file.getBytes());

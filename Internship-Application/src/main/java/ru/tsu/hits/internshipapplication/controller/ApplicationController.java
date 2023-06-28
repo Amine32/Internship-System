@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.internshipapplication.dto.ApplicationDto;
 import ru.tsu.hits.internshipapplication.service.ApplicationService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -15,8 +16,8 @@ public class ApplicationController {
     private final ApplicationService applicationService;
 
     @PostMapping("/{positionId}")
-    public ApplicationDto createApplication(@PathVariable String positionId) {
-        return applicationService.createApplication(positionId);
+    public ApplicationDto createApplication(@PathVariable String positionId, HttpServletRequest request) {
+        return applicationService.createApplication(positionId, request);
     }
 
     @GetMapping("/{applicationId}")

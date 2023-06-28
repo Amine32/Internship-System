@@ -11,6 +11,8 @@ public class ApplicationDto {
 
     private String positionId;
 
+    private String studentId;
+
     private List<String> status;
 
     private List<InterviewDto> interview;

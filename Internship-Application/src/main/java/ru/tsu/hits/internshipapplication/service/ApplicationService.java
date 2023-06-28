@@ -11,6 +11,7 @@ import ru.tsu.hits.internshipapplication.model.Status;
 import ru.tsu.hits.internshipapplication.model.StudentProfile;
 import ru.tsu.hits.internshipapplication.repository.ApplicationRepository;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -24,7 +25,7 @@ public class ApplicationService {
     private final StudentService studentService;
 
     @Transactional
-    public ApplicationDto createApplication(String positionId) {
+    public ApplicationDto createApplication(String positionId, HttpServletRequest request) {
         ApplicationEntity application = new ApplicationEntity();
 
         application.setId(UUID.randomUUID().toString());
@@ -34,7 +35,7 @@ public class ApplicationService {
         statuses.add(Status.NEW);
         application.setStatus(statuses);
 
-        StudentProfile student = studentService.getStudentByToken();
+        StudentProfile student = studentService.getStudentByToken(request);
         application.setStudent(student);
 
         if(student.getApplications() == null) {
