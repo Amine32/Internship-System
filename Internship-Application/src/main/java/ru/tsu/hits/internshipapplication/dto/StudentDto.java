@@ -12,4 +12,8 @@ public class StudentDto {
     private String resume;
 
     private List<ApplicationDto> applications;
+
+    private String companyName;
+
+    private String position;
 }

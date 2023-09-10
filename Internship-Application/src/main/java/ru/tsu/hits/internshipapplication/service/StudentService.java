@@ -6,10 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 import ru.tsu.hits.internshipapplication.dto.StudentDto;
 import ru.tsu.hits.internshipapplication.dto.UserIdDto;
 import ru.tsu.hits.internshipapplication.dto.converter.StudentDtoConverter;
@@ -28,8 +26,8 @@ public class StudentService {
     private final WebClient.Builder webClientBuilder;
 
     @Transactional(readOnly = true)
-    public StudentDto getStudentDtoById(String id) {
-        return StudentDtoConverter.convertEntityToDto(getStudentById(id));
+    public StudentDto getStudentDtoById(String id, HttpServletRequest request) {
+        return StudentDtoConverter.convertEntityToDto(getStudentById(id), request);
     }
 
     private StudentProfile getStudentById(String id) {
@@ -92,12 +90,10 @@ public class StudentService {
     }
 
     @Transactional
-    public StudentDto handleStudentUserCreatedEvent(String id) {
+    public void handleStudentUserCreatedEvent(String id) {
         StudentProfile profile = new StudentProfile();
         profile.setId(id);
         studentRepository.save(profile);
-
-        return StudentDtoConverter.convertEntityToDto(profile);
     }
 
     @Transactional

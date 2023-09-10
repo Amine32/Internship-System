@@ -8,6 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.tsu.hits.userservice.exception.JwtTokenExpiredException;
+import ru.tsu.hits.userservice.exception.JwtTokenMalformedException;
+import ru.tsu.hits.userservice.exception.JwtTokenMissingException;
 import ru.tsu.hits.userservice.service.CustomUserDetailsService;
 
 import javax.servlet.FilterChain;
@@ -38,31 +41,33 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             final String requestTokenHeader = request.getHeader("Authorization");
 
-            String username = null;
-            String jwtToken = null;
+            if (!"OPTIONS".equalsIgnoreCase(request.getMethod())) {
+                String username = null;
+                String jwtToken = null;
 
-            if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-                jwtToken = requestTokenHeader.substring(7);
-                try {
-                    username = jwtUtil.extractUsername(jwtToken);
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Unable to get JWT Token");
-                } catch (ExpiredJwtException e) {
-                    System.out.println("JWT Token has expired");
+                if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+                    jwtToken = requestTokenHeader.substring(7);
+                    try {
+                        username = jwtUtil.extractUsername(jwtToken);
+                    } catch (IllegalArgumentException e) {
+                        throw new JwtTokenMalformedException("Unable to get JWT Token");
+                    } catch (ExpiredJwtException e) {
+                        throw new JwtTokenExpiredException("JWT Token has expired");
+                    }
+                } else {
+                    throw new JwtTokenMissingException("JWT Token does not begin with Bearer String");
                 }
-            } else {
-                logger.warn("JWT Token does not begin with Bearer String");
-            }
 
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-                if (jwtUtil.validateToken(jwtToken, userDetails)) {
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    usernamePasswordAuthenticationToken
-                            .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    if (jwtUtil.validateToken(jwtToken, userDetails)) {
+                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        usernamePasswordAuthenticationToken
+                                .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    }
                 }
             }
         }

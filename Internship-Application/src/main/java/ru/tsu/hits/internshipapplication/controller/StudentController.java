@@ -17,13 +17,13 @@ public class StudentController {
     private final StudentService studentService;
 
     @GetMapping("/{id}")
-    public StudentDto getStudentById(@PathVariable String id) {
-        return studentService.getStudentDtoById(id);
+    public StudentDto getStudentById(@PathVariable String id, HttpServletRequest request) {
+        return studentService.getStudentDtoById(id, request);
     }
 
     @PostMapping("/{id}")
-    public StudentDto createStudentProfile(@PathVariable String id) {
-        return studentService.handleStudentUserCreatedEvent(id);
+    public void createStudentProfile(@PathVariable String id) {
+        studentService.handleStudentUserCreatedEvent(id);
     }
 
     @DeleteMapping("/{id}")

@@ -7,6 +7,7 @@ import ru.tsu.hits.internshipapplication.dto.ApplicationDto;
 import ru.tsu.hits.internshipapplication.dto.converter.ApplicationDtoConverter;
 import ru.tsu.hits.internshipapplication.exception.ApplicationNotFoundException;
 import ru.tsu.hits.internshipapplication.model.ApplicationEntity;
+import ru.tsu.hits.internshipapplication.model.InterviewEntity;
 import ru.tsu.hits.internshipapplication.model.Status;
 import ru.tsu.hits.internshipapplication.model.StudentProfile;
 import ru.tsu.hits.internshipapplication.repository.ApplicationRepository;
@@ -72,11 +73,35 @@ public class ApplicationService {
         return ApplicationDtoConverter.convertEntityToDto(application);
     }
 
+
+    @Transactional(readOnly = true)
     public List<ApplicationDto> getAllByPositionId(String positionId) {
         List<ApplicationEntity> applications = applicationRepository.findAllByPositionId(positionId);
 
         return applications.stream()
                 .map(ApplicationDtoConverter::convertEntityToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void addInterview(String applicationId, InterviewEntity interview) {
+        ApplicationEntity application = getApplicationById(applicationId);
+
+        List<InterviewEntity> interviews = application.getInterviews();
+
+        if (interviews == null) {
+            interviews = new ArrayList<>();
+        }
+
+        interviews.add(interview);
+
+        application.setInterviews(interviews);
+
+        // Assuming applicationRepository is an instance of JpaRepository or CrudRepository
+        applicationRepository.save(application);
+    }
+
+    public void deleteApplicationById(String applicationId) {
+        applicationRepository.deleteById(applicationId);
     }
 }

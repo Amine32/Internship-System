@@ -4,14 +4,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-import ru.tsu.hits.userservice.dto.CreateUpdateUserDto;
+import org.springframework.web.reactive.function.client.WebClient;
+import ru.tsu.hits.userservice.dto.CreateUserDto;
+import ru.tsu.hits.userservice.dto.UpdateUserDto;
 import ru.tsu.hits.userservice.dto.UserDto;
 import ru.tsu.hits.userservice.dto.UserSecurityDto;
 import ru.tsu.hits.userservice.dto.converter.UserDtoConverter;
@@ -31,11 +31,11 @@ import java.util.*;
 public class UserService {
 
     private final UserRepository userRepository;
-    private RestTemplate restTemplate;
+    private final WebClient.Builder webClientBuilder;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Transactional
-    public UserDto signUp(CreateUpdateUserDto dto) {
+    public UserDto signUp(CreateUserDto dto) {
         UserEntity userEntity = UserDtoConverter.convertDtoToEntity(dto);
         userEntity.setRole(Role.valueOf(dto.getRole()));
 
@@ -47,20 +47,21 @@ public class UserService {
         userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
         userEntity = userRepository.save(userEntity);
 
-        if(userEntity.getRole() == Role.SCHOOL) {
+        if(userEntity.getRole() == Role.STUDENT) {
             if(userEntity.getGroup() != null) {
-                HttpHeaders headers = new HttpHeaders();
-                headers.set("Content-Type", "application/json");
-                HttpEntity<String> entity = new HttpEntity<>(headers);
-
-                restTemplate.postForEntity("https://hits-application-service.onrender.com/api/students/" + userEntity.getId(), entity, String.class);
+                webClientBuilder.build()
+                        .post()
+                        .uri("https://hits-application-service.onrender.com/api/students/" + userEntity.getId())
+                        .retrieve()
+                        .bodyToMono(Void.class)
+                        .block();
             }
             else {
                 throw new UserLacksFieldException("Student requires a corresponding groupNumber");
             }
         }
 
-        if(userEntity.getRole() == Role.COMPANY && userEntity.getCompanyId() != null) {
+        if(userEntity.getRole() == Role.COMPANY && userEntity.getCompanyId() == null) {
             throw new UserLacksFieldException("User belonging to company needs a company id");
         }
 
@@ -69,6 +70,25 @@ public class UserService {
 
     public void editUser(UserEntity user) {
         userRepository.save(user);
+    }
+
+    @Transactional
+    public UserDto editUserById(String userId, UpdateUserDto dto) {
+        UserEntity user = getUserById(userId);
+
+        UserEntity checkEmail = getUserByEmail(dto.getEmail());
+        if(!Objects.equals(user.getEmail(), dto.getEmail()) && checkEmail != null) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        user.setEmail(dto.getEmail());
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setPatronym(dto.getPatronym());
+
+        user = userRepository.save(user);
+
+        return UserDtoConverter.convertEntityToDto(user);
     }
 
     @Transactional(readOnly = true)
@@ -97,9 +117,7 @@ public class UserService {
         List<UserEntity> users = userRepository.findAllByRole(role);
         List<UserDto> result = new ArrayList<>();
 
-        users.forEach(element -> {
-            result.add(UserDtoConverter.convertEntityToDto(element));
-        });
+        users.forEach(element -> result.add(UserDtoConverter.convertEntityToDto(element)));
 
         return result;
     }
@@ -116,9 +134,14 @@ public class UserService {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Content-Type", "application/json");
             headers.set("Authorization", "Bearer " + jwtToken);
-            HttpEntity<String> entity = new HttpEntity<>(headers);
 
-            restTemplate.delete("https://hits-application-service.onrender.com/api/students/" + id, entity, String.class);
+            webClientBuilder.build()
+                    .delete()
+                    .uri("https://hits-application-service.onrender.com/api/students/" + id)
+                    .headers(httpHeaders -> httpHeaders.addAll(headers))
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .block();
         }
     }
 
@@ -165,12 +188,13 @@ public class UserService {
             // Convert payload JSON string to a Map
             Map<String, Object> payloadMap;
             try {
-                payloadMap = new ObjectMapper().readValue(payload, new TypeReference<Map<String, Object>>() {});
+                payloadMap = new ObjectMapper().readValue(payload, new TypeReference<>() {
+                });
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("Failed to decode payload", e);
             }
 
-            // Get the sub claim
+            // Get the 'sub' claim
             String email = (String) payloadMap.get("sub");
 
             return getUserDtoByEmail(email);

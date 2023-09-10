@@ -8,6 +8,7 @@ import ru.tsu.hits.internshipapplication.dto.InterviewDto;
 import ru.tsu.hits.internshipapplication.dto.converter.InterviewDtoConverter;
 import ru.tsu.hits.internshipapplication.exception.InterviewNotFoundException;
 import ru.tsu.hits.internshipapplication.model.InterviewEntity;
+import ru.tsu.hits.internshipapplication.model.Status;
 import ru.tsu.hits.internshipapplication.repository.InterviewRepository;
 
 import java.util.UUID;
@@ -27,6 +28,9 @@ public class InterviewService {
         interviewEntity.setApplication(applicationService.getApplicationById(applicationId));
 
         interviewEntity = interviewRepository.save(interviewEntity);
+
+        applicationService.addInterview(applicationId, interviewEntity);
+        applicationService.addStatus(applicationId, Status.INTERVIEW_IS_APPOINTED.toString());
 
         return InterviewDtoConverter.convertEntityToDto(interviewEntity);
     }

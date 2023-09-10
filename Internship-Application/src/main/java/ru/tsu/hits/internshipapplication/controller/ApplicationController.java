@@ -34,4 +34,9 @@ public class ApplicationController {
     public List<ApplicationDto> getAllByPositionId(@PathVariable String positionId) {
         return applicationService.getAllByPositionId(positionId);
     }
+
+    @DeleteMapping("/{applicationId}")
+    public void deleteApplication(@PathVariable String applicationId) {
+        applicationService.deleteApplicationById(applicationId);
+    }
 }

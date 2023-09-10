@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,10 +38,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
+        String method = request.getMethod();
 
         // Skip JWT extraction and validation for excluded paths
-        if (EXCLUDED_PATHS.stream().noneMatch(path::startsWith)) {
-
+        if (!isExcluded(path, method)) {
             final String authorizationHeader = request.getHeader("Authorization");
 
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -56,8 +55,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         .retrieve()
                         .bodyToMono(Boolean.class)
                         .block();
-
-                System.out.println("Is Boolean valid: " + isValid);
 
                 if (Boolean.TRUE.equals(isValid)) {
 
@@ -77,7 +74,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                             .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 } else {
-                    System.out.println("Boolean is not valid");
                     // Token is not valid, reject the request
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     return;
@@ -86,5 +82,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         chain.doFilter(request, response);
+    }
+
+    private boolean isExcluded(String path, String method) {
+        // Exclude only POST requests to "/api/students/"
+        if (path.startsWith("/api/students/") && "POST".equalsIgnoreCase(method)) {
+            return true;
+        }
+
+        // Exclude other paths for all methods
+        for (String excludedPath : EXCLUDED_PATHS) {
+            if (path.startsWith(excludedPath)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

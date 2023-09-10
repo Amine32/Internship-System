@@ -29,8 +29,6 @@ public class JwtAuthenticationController {
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getEmail());
 
-        System.out.println(userDetails.getPassword());
-
         final String token = jwtTokenUtil.generateToken(userDetails);
 
         return new JwtResponse(token);
@@ -38,10 +36,8 @@ public class JwtAuthenticationController {
 
     private void authenticate(String username, String password) throws Exception {
         try {
-            System.out.println("We have reached the method authenticate");
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {
-            System.out.println("The user has been disabled");
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);

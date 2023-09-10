@@ -26,6 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**", "/v2/**", "/swagger-resources/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/students/{id}").permitAll()
                 .antMatchers(HttpMethod.OPTIONS,"/**").permitAll() // allow CORS preflight requests
                 .anyRequest().authenticated()
                 .and().exceptionHandling().and()
