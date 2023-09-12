@@ -10,15 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-import ru.tsu.hits.userservice.dto.CreateUserDto;
-import ru.tsu.hits.userservice.dto.UpdateUserDto;
-import ru.tsu.hits.userservice.dto.UserDto;
-import ru.tsu.hits.userservice.dto.UserSecurityDto;
-import ru.tsu.hits.userservice.dto.converter.UserDtoConverter;
-import ru.tsu.hits.userservice.exception.TokenNotFoundException;
-import ru.tsu.hits.userservice.exception.UserLacksFieldException;
-import ru.tsu.hits.userservice.exception.UserNotFoundException;
-import ru.tsu.hits.userservice.exception.WrongRoleException;
+import ru.tsu.hits.userservice.dto.*;
+import ru.tsu.hits.userservice.exception.*;
 import ru.tsu.hits.userservice.model.Role;
 import ru.tsu.hits.userservice.model.UserEntity;
 import ru.tsu.hits.userservice.repository.UserRepository;
@@ -33,36 +26,24 @@ public class UserService {
     private final UserRepository userRepository;
     private final WebClient.Builder webClientBuilder;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final ValidationService validationService;
 
     @Transactional
     public UserDto signUp(CreateUserDto dto) {
+        validationService.validateUserSignUp(dto);
+
         UserEntity userEntity = UserDtoConverter.convertDtoToEntity(dto);
         userEntity.setRole(Role.valueOf(dto.getRole()));
 
-        //check if the user already exists
-        if(userRepository.findByEmail(userEntity.getEmail()) != null) {
-            throw new IllegalArgumentException("User already exists");
-        }
-        //encode the password and set it
         userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
         userEntity = userRepository.save(userEntity);
 
         if(userEntity.getRole() == Role.STUDENT) {
-            if(userEntity.getGroup() != null) {
-                webClientBuilder.build()
-                        .post()
-                        .uri("https://hits-application-service.onrender.com/api/students/" + userEntity.getId())
-                        .retrieve()
-                        .bodyToMono(Void.class)
-                        .block();
-            }
-            else {
-                throw new UserLacksFieldException("Student requires a corresponding groupNumber");
-            }
+            validationService.validateStudentGroup(userEntity);
         }
 
-        if(userEntity.getRole() == Role.COMPANY && userEntity.getCompanyId() == null) {
-            throw new UserLacksFieldException("User belonging to company needs a company id");
+        if(userEntity.getRole() == Role.COMPANY) {
+            validationService.validateCompanyUser(userEntity);
         }
 
         return UserDtoConverter.convertEntityToDto(userEntity);
@@ -76,15 +57,7 @@ public class UserService {
     public UserDto editUserById(String userId, UpdateUserDto dto) {
         UserEntity user = getUserById(userId);
 
-        UserEntity checkEmail = getUserByEmail(dto.getEmail());
-        if(!Objects.equals(user.getEmail(), dto.getEmail()) && checkEmail != null) {
-            throw new IllegalArgumentException("Email already exists");
-        }
-
-        user.setEmail(dto.getEmail());
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setPatronym(dto.getPatronym());
+        validationService.validateUserEdit(userId, dto);
 
         user = userRepository.save(user);
 
@@ -125,31 +98,12 @@ public class UserService {
     @Transactional
     public void deleteUser(String id, HttpServletRequest request) {
         userRepository.deleteById(id);
-
-        String authHeader = request.getHeader("Authorization");
-
-        if(authHeader != null && authHeader.startsWith("Bearer ")) {
-            String jwtToken = authHeader.substring(7);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Type", "application/json");
-            headers.set("Authorization", "Bearer " + jwtToken);
-
-            webClientBuilder.build()
-                    .delete()
-                    .uri("https://hits-application-service.onrender.com/api/students/" + id)
-                    .headers(httpHeaders -> httpHeaders.addAll(headers))
-                    .retrieve()
-                    .bodyToMono(Void.class)
-                    .block();
-        }
     }
 
     @Transactional
     public UserDto addCompany(String userId, String companyId) {
         UserEntity user = getUserById(userId);
 
-        //Check if user has company role
         if(user.getRole() != Role.COMPANY) {
             throw new WrongRoleException("User does not have COMPANY role");
         }
@@ -174,36 +128,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserDto getUserByToken(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-
-        if(authHeader != null && authHeader.startsWith("Bearer ")) {
-            String jwtToken = authHeader.substring(7);
-
-            // Split the token into parts (header, payload, signature)
-            String[] jwtParts = jwtToken.split("\\.");
-
-            // Base64 decode the payload
-            String payload = new String(Base64.getDecoder().decode(jwtParts[1]));
-
-            // Convert payload JSON string to a Map
-            Map<String, Object> payloadMap;
-            try {
-                payloadMap = new ObjectMapper().readValue(payload, new TypeReference<>() {
-                });
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("Failed to decode payload", e);
-            }
-
-            // Get the 'sub' claim
-            String email = (String) payloadMap.get("sub");
-
-            return getUserDtoByEmail(email);
-        }
-
-        else {
-            throw new TokenNotFoundException("Token not found");
-        }
+        return validationService.extractUserFromToken(request);
     }
 
 }
-

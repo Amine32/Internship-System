@@ -22,9 +22,7 @@ import ru.tsu.hits.userservice.service.CustomUserDetailsService;
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     private final CustomUserDetailsService myUserDetailsService;
-
     private final JwtRequestFilter jwtRequestFilter;
-
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -34,15 +32,15 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeRequests().antMatchers("/api/validate","/api/authenticate", "/api/users/sign-up", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**", "/v2/**", "/swagger-resources/**").permitAll()
-                .antMatchers(HttpMethod.OPTIONS,"/**").permitAll() // allow CORS preflight requests
+                .authorizeRequests()
+                .antMatchers("/api/validate","/api/authenticate", "/api/users/sign-up", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**", "/v2/**", "/swagger-resources/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -55,4 +53,3 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 }
-

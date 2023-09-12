@@ -19,13 +19,14 @@ import java.util.List;
 public class GroupService {
 
     private final GroupRepository groupRepository;
-
     private final UserService userService;
+    private final ValidationService validationService;
 
     @Transactional
     public GroupDto createGroup(String groupNumber) {
+        validationService.validateGroupNumber(groupNumber);
+
         GroupEntity groupEntity = new GroupEntity();
-        System.out.println(groupNumber);
         groupEntity.setGroupNumber(groupNumber);
 
         groupEntity = groupRepository.save(groupEntity);
@@ -36,21 +37,15 @@ public class GroupService {
     @Transactional
     public GroupDto addStudent(String studentId, String groupNumber) {
         GroupEntity group = getGroupById(groupNumber);
-
         UserEntity student = userService.getUserById(studentId);
 
-        //check if student already belongs to any group
-        if(student.getGroup() != null) {
-            throw new StudentAlreadyBelongsToGroup("Student already belongs to a group");
-        }
+        validationService.validateStudentGroupAddition(student, group);
 
         student.setGroup(group);
-
         List<UserEntity> students = group.getStudents();
         students.add(student);
 
         group.setStudents(students);
-
         group = groupRepository.save(group);
         userService.editUser(student);
 
@@ -65,7 +60,6 @@ public class GroupService {
     @Transactional(readOnly = true)
     public List<GroupDto> getAllGroups() {
         List<GroupEntity> groups = groupRepository.findAll();
-
         List<GroupDto> result = new ArrayList<>();
 
         groups.forEach(element -> result.add(GroupDtoConverter.convertEntityToDto(element)));

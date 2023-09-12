@@ -36,7 +36,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // Skip JWT extraction and validation for excluded paths
         if (EXCLUDED_PATHS.stream().noneMatch(path::startsWith)) {
 
             final String requestTokenHeader = request.getHeader("Authorization");
@@ -75,4 +74,3 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 }
-
