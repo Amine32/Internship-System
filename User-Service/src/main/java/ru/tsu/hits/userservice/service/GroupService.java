@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.tsu.hits.userservice.dto.GroupDto;
 import ru.tsu.hits.userservice.dto.converter.GroupDtoConverter;
 import ru.tsu.hits.userservice.exception.GroupNotFoundException;
+import ru.tsu.hits.userservice.exception.StudentAlreadyBelongsToGroup;
 import ru.tsu.hits.userservice.model.GroupEntity;
 import ru.tsu.hits.userservice.model.UserEntity;
 import ru.tsu.hits.userservice.repository.GroupRepository;
@@ -18,14 +19,13 @@ import java.util.List;
 public class GroupService {
 
     private final GroupRepository groupRepository;
-    private final UserService userService;
-    private final ValidationService validationService;
+    private final UserQueryService userQueryService;
+    private final UserCommandService userCommandService;
 
     @Transactional
     public GroupDto createGroup(String groupNumber) {
-        validationService.validateGroupNumber(groupNumber);
-
         GroupEntity groupEntity = new GroupEntity();
+        System.out.println(groupNumber);
         groupEntity.setGroupNumber(groupNumber);
 
         groupEntity = groupRepository.save(groupEntity);
@@ -36,17 +36,23 @@ public class GroupService {
     @Transactional
     public GroupDto addStudent(String studentId, String groupNumber) {
         GroupEntity group = getGroupById(groupNumber);
-        UserEntity student = userService.getUserById(studentId);
 
-        validationService.validateStudentGroupAddition(student, group);
+        UserEntity student = userQueryService.getUserById(studentId);
+
+        //check if student already belongs to any group
+        if(student.getGroup() != null) {
+            throw new StudentAlreadyBelongsToGroup("Student already belongs to a group");
+        }
 
         student.setGroup(group);
+
         List<UserEntity> students = group.getStudents();
         students.add(student);
 
         group.setStudents(students);
+
         group = groupRepository.save(group);
-        userService.editUser(student);
+        userCommandService.editUser(student);
 
         return GroupDtoConverter.convertEntityToDto(group);
     }
@@ -59,6 +65,7 @@ public class GroupService {
     @Transactional(readOnly = true)
     public List<GroupDto> getAllGroups() {
         List<GroupEntity> groups = groupRepository.findAll();
+
         List<GroupDto> result = new ArrayList<>();
 
         groups.forEach(element -> result.add(GroupDtoConverter.convertEntityToDto(element)));

@@ -7,7 +7,8 @@ import ru.tsu.hits.userservice.dto.UpdateUserDto;
 import ru.tsu.hits.userservice.dto.UserDto;
 import ru.tsu.hits.userservice.dto.UserSecurityDto;
 import ru.tsu.hits.userservice.model.Role;
-import ru.tsu.hits.userservice.service.UserService;
+import ru.tsu.hits.userservice.service.UserCommandService;
+import ru.tsu.hits.userservice.service.UserQueryService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -18,51 +19,51 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final UserCommandService userCommandService;
+    private final UserQueryService userQueryService;
 
     @PostMapping("/sign-up")
-    public UserDto signUp(@RequestBody CreateUserDto user) {
-        return userService.signUp(user);
+    public UserDto signUp(@Valid @RequestBody CreateUserDto user) {
+        return userCommandService.signUp(user);
     }
-
 
     @GetMapping("/{email}")
     public UserDto getUserByEmail(@PathVariable String email) {
-        return userService.getUserDtoByEmail(email);
+        return userQueryService.getUserDtoByEmail(email);
     }
 
     @GetMapping("/roles/{role}")
     public List<UserDto> getUsersByRole(@PathVariable String role) {
-        return userService.getUsersByRole(Role.valueOf(role));
+        return userQueryService.getUsersByRole(Role.valueOf(role));
     }
 
     @GetMapping("/jwt")
     public UserDto getUserByToken(HttpServletRequest request) {
-        return userService.getUserByToken(request);
+        return userQueryService.getUserByToken(request);
     }
 
     @DeleteMapping("{id}")
     public void deleteUserById(@PathVariable String id, HttpServletRequest request) {
-        userService.deleteUser(id, request);
+        userCommandService.deleteUser(id, request);
     }
 
     @GetMapping("/security/{email}")
     public UserSecurityDto getUserSecurityDtoByEmail(@PathVariable String email) {
-        return userService.getUserSecurityDetails(email);
+        return userCommandService.getUserSecurityDetails(email);
     }
 
     @PostMapping("/company/{userId}/{companyId}")
     public UserDto setCompany(@PathVariable String userId, @PathVariable String companyId) {
-        return userService.addCompany(userId, companyId);
+        return userCommandService.addCompany(userId, companyId);
     }
 
     @GetMapping("/id/{userId}")
     public UserDto getUserById(@PathVariable String userId) {
-        return userService.getUserDtoById(userId);
+        return userQueryService.getUserDtoById(userId);
     }
 
     @PatchMapping("/edit/{userId}")
-    public UserDto editUser(@PathVariable String userId, @Valid @RequestBody UpdateUserDto dto){
-        return userService.editUserById(userId, dto);
+    public UserDto editUser(@PathVariable String userId, @Valid @RequestBody UpdateUserDto dto) {
+        return userCommandService.editUserById(userId, dto);
     }
 }
