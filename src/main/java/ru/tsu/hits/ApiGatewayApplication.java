@@ -1,13 +1,13 @@
-package ru.tsu.hits.internshipsystem;
+package ru.tsu.hits;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class InternshipSystemApplication {
+public class ApiGatewayApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(InternshipSystemApplication.class, args);
+        SpringApplication.run(ApiGatewayApplication.class, args);
     }
-
 }
+

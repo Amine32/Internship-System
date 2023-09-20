@@ -1,16 +1,11 @@
 package ru.tsu.hits.userservice.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
 import ru.tsu.hits.userservice.dto.*;
+import ru.tsu.hits.userservice.dto.converter.UserDtoConverter;
 import ru.tsu.hits.userservice.exception.*;
 import ru.tsu.hits.userservice.model.Role;
 import ru.tsu.hits.userservice.model.UserEntity;
@@ -24,8 +19,7 @@ import java.util.*;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final WebClient.Builder webClientBuilder;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
     private final ValidationService validationService;
 
     @Transactional
@@ -34,7 +28,6 @@ public class UserService {
 
         UserEntity userEntity = UserDtoConverter.convertDtoToEntity(dto);
         userEntity.setRole(Role.valueOf(dto.getRole()));
-
         userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
         userEntity = userRepository.save(userEntity);
 
@@ -57,9 +50,9 @@ public class UserService {
     public UserDto editUserById(String userId, UpdateUserDto dto) {
         UserEntity user = getUserById(userId);
 
-        validationService.validateUserEdit(userId, dto);
+        validationService.validateUserEdit(dto, user);
 
-        user = userRepository.save(user);
+        editUser(user);
 
         return UserDtoConverter.convertEntityToDto(user);
     }
@@ -128,7 +121,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserDto getUserByToken(HttpServletRequest request) {
-        return validationService.extractUserFromToken(request);
+        return getUserDtoByEmail(validationService.extractEmailFromToken(request));
     }
 
 }

@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://dpg-ci7akq98g3nfucdt3ku0-a.frankfurt-postgres.render.com/hits_user_service_db
-    username: admin
-    password: pPMJlvwImRXVEdB5NCWdv3wX8l3CI8i8
+    url: jdbc:postgresql://localhost:5432/User-Service
+    username: postgres
+    password: postgres
 
   jpa:
     hibernate:
@@ -17,4 +17,8 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 

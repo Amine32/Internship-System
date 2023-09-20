@@ -54,7 +54,7 @@ public class ApplicationDtoConverter {
                 .block();
 
         if (positionDto != null) {
-            dto.setPosition(positionDto.getIntershipPositionName());
+            dto.setPosition(positionDto.getInternshipPositionName());
             dto.setCompanyName(positionDto.getCompanyName());
         }
 

@@ -7,5 +7,5 @@ public class PositionInfoDto {
 
     private String companyName;
 
-    private String intershipPositionName;
+    private String internshipPositionName;
 }

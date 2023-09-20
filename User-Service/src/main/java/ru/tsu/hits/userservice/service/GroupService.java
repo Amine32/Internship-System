@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.tsu.hits.userservice.dto.GroupDto;
 import ru.tsu.hits.userservice.dto.converter.GroupDtoConverter;
 import ru.tsu.hits.userservice.exception.GroupNotFoundException;
-import ru.tsu.hits.userservice.exception.StudentAlreadyBelongsToGroup;
 import ru.tsu.hits.userservice.model.GroupEntity;
 import ru.tsu.hits.userservice.model.UserEntity;
 import ru.tsu.hits.userservice.repository.GroupRepository;

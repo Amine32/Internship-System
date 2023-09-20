@@ -1,11 +1,11 @@
-    package ru.tsu.hits.internshipapplication.dto;
+package ru.tsu.hits.internshipapplication.dto;
 
-    import lombok.Data;
+import lombok.Data;
 
-    @Data
-    public class WorkPlaceDto {
+@Data
+public class WorkPlaceDto {
 
-        private String companyName;
+    private String companyName;
 
-        private String position;
-    }
+    private String position;
+}

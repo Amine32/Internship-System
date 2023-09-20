@@ -3,12 +3,13 @@ package ru.tsu.hits.userservice.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.tsu.hits.userservice.dto.CreateUserDto;
 import ru.tsu.hits.userservice.dto.UpdateUserDto;
 import ru.tsu.hits.userservice.exception.TokenNotFoundException;
 import ru.tsu.hits.userservice.exception.UserLacksFieldException;
+import ru.tsu.hits.userservice.model.GroupEntity;
 import ru.tsu.hits.userservice.model.Role;
 import ru.tsu.hits.userservice.model.UserEntity;
 
@@ -17,10 +18,8 @@ import java.util.Base64;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class ValidationService {
-
-    @Autowired
-    private UserService userService;
 
     public void validateUserSignUp(CreateUserDto dto) {
         if (dto.getEmail() == null || dto.getEmail().isEmpty()) {
@@ -41,19 +40,19 @@ public class ValidationService {
     }
 
     public void validateUserEdit(UpdateUserDto dto, UserEntity existingUser) {
-        if (dto.getEmail() != null && !dto.getEmail().equals(existingUser.getEmail()) && userService.getUserByEmail(dto.getEmail()) != null) {
+        if (dto.getEmail() != null && !dto.getEmail().equals(existingUser.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
         // Further validations can be added as per requirement
     }
 
-    public UserEntity extractUserFromToken(HttpServletRequest request) {
+    public String extractEmailFromToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new TokenNotFoundException("Authorization header must be provided");
         }
         String token = authHeader.substring(7);
-        String[] chunks = token.split("\.");
+        String[] chunks = token.split("\\.");
         if (chunks.length < 2) {
             throw new TokenNotFoundException("Invalid token");
         }
@@ -64,7 +63,24 @@ public class ValidationService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Failed to decode payload", e);
         }
-        String email = (String) payloadMap.get("sub");
-        return userService.getUserByEmail(email);
+        return (String) payloadMap.get("sub");
+    }
+
+    public void validateStudentGroup(UserEntity userEntity) {
+        if(userEntity.getGroup() == null) {
+            throw new UserLacksFieldException("Student requires a corresponding groupNumber");
+        }
+    }
+
+    public void validateCompanyUser(UserEntity userEntity) {
+        if(userEntity.getCompanyId() == null) {
+            throw new UserLacksFieldException("User belonging to a company requires a company id");
+        }
+    }
+
+    public void validateGroupNumber(String groupNumber) {
+    }
+
+    public void validateStudentGroupAddition(UserEntity student, GroupEntity group) {
     }
 }
