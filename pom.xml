@@ -11,6 +11,7 @@
     <description>Internship-System</description>
     <properties>
         <java.version>11</java.version>
+        <spring-cloud.version>2022.0.1</spring-cloud.version>
     </properties>
 
     <parent>
@@ -20,7 +21,28 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>2.7.14</version>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>2021.0.3</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+            <version>3.1.8</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -33,7 +55,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -59,21 +80,6 @@
             <artifactId>tosan-httpclient-spring-boot-resttemplate-starter</artifactId>
             <version>2.0.2</version>
         </dependency>
-        <dependency>
-            <groupId>com.tosan.client.http</groupId>
-            <artifactId>tosan-httpclient-spring-boot-resttemplate-starter</artifactId>
-            <version>2.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tosan.client.http</groupId>
-            <artifactId>tosan-httpclient-spring-boot-resttemplate-starter</artifactId>
-            <version>2.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tosan.client.http</groupId>
-            <artifactId>tosan-httpclient-spring-boot-resttemplate-starter</artifactId>
-            <version>2.0.2</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -92,5 +98,12 @@
             </plugin>
         </plugins>
     </build>
+
+    <modules>
+        <module>Company-Service</module>
+        <module>Internship-Application</module>
+        <module>User-Service</module>
+        <module>Api-Gateway</module>
+    </modules>
 
 </project>
