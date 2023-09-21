@@ -1,0 +1,30 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user_service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/User-Service/**
+        - id: application_service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/Internship-Application/**
+        - id: company_service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/Company-Service/**
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000, https://frontend-app.com"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - PATCH
+            allowedHeaders: "*"
+            allowCredentials: true
