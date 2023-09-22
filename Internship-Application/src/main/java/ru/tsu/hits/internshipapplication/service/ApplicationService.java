@@ -6,13 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.tsu.hits.internshipapplication.dto.ApplicationDto;
 import ru.tsu.hits.internshipapplication.dto.converter.ApplicationDtoConverter;
 import ru.tsu.hits.internshipapplication.exception.ApplicationNotFoundException;
-import ru.tsu.hits.internshipapplication.model.ApplicationEntity;
-import ru.tsu.hits.internshipapplication.model.InterviewEntity;
-import ru.tsu.hits.internshipapplication.model.Status;
-import ru.tsu.hits.internshipapplication.model.StudentProfile;
+import ru.tsu.hits.internshipapplication.model.*;
 import ru.tsu.hits.internshipapplication.repository.ApplicationRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,13 +26,19 @@ public class ApplicationService {
     @Transactional
     public ApplicationDto createApplication(String positionId, HttpServletRequest request) {
         ApplicationEntity application = new ApplicationEntity();
-
         application.setId(UUID.randomUUID().toString());
         application.setPositionId(positionId);
 
-        List<Status> statuses = new ArrayList<>();
-        statuses.add(Status.NEW);
-        application.setStatus(statuses);
+        //Initialize StatusHistory list and add initial status
+        StatusHistory initialStatus = new StatusHistory();
+        initialStatus.setStatus(Status.NEW);
+        initialStatus.setAddedAt(LocalDate.now());
+        initialStatus.setApplication(application);
+
+        List<StatusHistory> statusHistoryList = new ArrayList<>();
+        statusHistoryList.add(initialStatus);
+
+        application.setStatusHistory(statusHistoryList);
 
         StudentProfile student = studentService.getStudentByToken(request);
         application.setStudent(student);
@@ -64,10 +68,16 @@ public class ApplicationService {
     public ApplicationDto addStatus(String applicationId, String status) {
         ApplicationEntity application = getApplicationById(applicationId);
 
-        List<Status> statuses = application.getStatus();
-        statuses.add(Status.valueOf(status));
-        application.setStatus(statuses);
+        StatusHistory statusHistory = new StatusHistory();
+        statusHistory.setStatus(Status.valueOf(status));
+        statusHistory.setAddedAt(LocalDate.now());
+        statusHistory.setApplication(application);
 
+        if(application.getStatusHistory() == null) {
+            application.setStatusHistory(new ArrayList<>());
+        }
+
+        application.getStatusHistory().add(statusHistory);
         application = applicationRepository.save(application);
 
         return ApplicationDtoConverter.convertEntityToDto(application);
@@ -97,7 +107,6 @@ public class ApplicationService {
 
         application.setInterviews(interviews);
 
-        // Assuming applicationRepository is an instance of JpaRepository or CrudRepository
         applicationRepository.save(application);
     }
 

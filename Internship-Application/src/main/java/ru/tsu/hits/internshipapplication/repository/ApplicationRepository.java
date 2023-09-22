@@ -6,5 +6,5 @@ import ru.tsu.hits.internshipapplication.model.ApplicationEntity;
 import java.util.List;
 
 public interface ApplicationRepository extends JpaRepository<ApplicationEntity, String> {
-    public List<ApplicationEntity> findAllByPositionId(String positionId);
+    List<ApplicationEntity> findAllByPositionId(String positionId);
 }

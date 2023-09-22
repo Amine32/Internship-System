@@ -29,6 +29,10 @@ public class ApiGatewayApplication {
                         .path("/company-service/**")
                         .filters(f -> f.stripPrefix(1))
                         .uri("http://localhost:8083/"))
+                .route(p -> p
+                        .path("/stack-service/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("http://localhost:8084"))
                 .build();
     }
 }

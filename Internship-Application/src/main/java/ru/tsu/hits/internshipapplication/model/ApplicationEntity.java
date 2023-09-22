@@ -19,11 +19,8 @@ public class ApplicationEntity {
     @JoinColumn(name = "student_id")
     private StudentProfile student;
 
-    @ElementCollection(targetClass = Status.class)
-    @CollectionTable(name = "status", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private List<Status> status;
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL)
+    private List<StatusHistory> statusHistory;
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL)
     private List<InterviewEntity> interviews;
