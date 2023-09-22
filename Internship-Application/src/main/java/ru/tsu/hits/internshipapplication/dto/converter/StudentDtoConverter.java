@@ -1,27 +1,21 @@
 package ru.tsu.hits.internshipapplication.dto.converter;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.tsu.hits.internshipapplication.dto.ApplicationDto;
 import ru.tsu.hits.internshipapplication.dto.StudentDto;
-import ru.tsu.hits.internshipapplication.dto.WorkPlaceDto;
 import ru.tsu.hits.internshipapplication.model.ApplicationEntity;
 import ru.tsu.hits.internshipapplication.model.StudentProfile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class StudentDtoConverter {
 
     private static final ModelMapper modelMapper = new ModelMapper();
-
-    private static final WebClient.Builder webClientBuilder;
-
-    static {
-        webClientBuilder = WebClient.builder();
-    }
+    private static final WebClient webClient = WebClient.builder().build();
 
     public static StudentDto convertEntityToDto(StudentProfile student, HttpServletRequest request) {
         StudentDto dto = modelMapper.map(student, StudentDto.class);
@@ -32,32 +26,60 @@ public class StudentDtoConverter {
 
         dto.setApplications(applicationList);
 
-        String authHeader = request.getHeader("Authorization");
+        List<String> languageNames = fetchLanguagesByIds(student.getLanguageIds());
+        List<String> positionNames = fetchPositionsByIds(student.getPositionIds());
+        List<String> technologyNames = fetchTechnologiesByIds(student.getTechnologyIds());
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String jwtToken = authHeader.substring(7);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Type", "application/json");
-            headers.set("Authorization", "Bearer " + jwtToken);
-
-            WebClient webClient = webClientBuilder.build();
-            WorkPlaceDto workPlace = webClient
-                    .get()
-                    .uri("https://practice-service.onrender.com/api/workPlaceInfo/info/" + student.getId())
-                    .headers(httpHeaders -> httpHeaders.addAll(headers))
-                    .retrieve()
-                    .bodyToMono(WorkPlaceDto.class)
-                    .onErrorReturn(new WorkPlaceDto())
-                    .block();
-
-            if(workPlace != null){
-                dto.setCompanyName(workPlace.getCompanyName());
-                dto.setPosition(workPlace.getPosition());
-            }
-        }
+        // Set these to the dto
+        dto.setLanguages(languageNames);
+        dto.setPositions(positionNames);
+        dto.setTechnologies(technologyNames);
 
         return dto;
     }
 
+    private static List<String> fetchLanguagesByIds(List<String> ids) {
+
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return webClient.post()
+                .uri("http://localhost:8080/stack-service/api/languages/byIds")
+                .bodyValue(ids)
+                .retrieve()
+                .bodyToFlux(String.class)
+                .collectList()
+                .block();
+    }
+
+    private static List<String> fetchPositionsByIds(List<String> ids) {
+
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return webClient.post()
+                .uri("http://localhost:8080/stack-service/api/positions/byIds")
+                .bodyValue(ids)
+                .retrieve()
+                .bodyToFlux(String.class)
+                .collectList()
+                .block();
+    }
+
+    private static List<String> fetchTechnologiesByIds(List<String> ids) {
+
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return webClient.post()
+                .uri("http://localhost:8080/stack-service/api/technologies/byIds")
+                .bodyValue(ids)
+                .retrieve()
+                .bodyToFlux(String.class)
+                .collectList()
+                .block();
+    }
 }

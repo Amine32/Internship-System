@@ -19,4 +19,13 @@ public class StudentProfile {
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<ApplicationEntity> applications;
+
+    @ElementCollection
+    private List<String> languageIds;
+
+    @ElementCollection
+    private List<String> positionIds;
+
+    @ElementCollection
+    private List<String> technologyIds;
 }

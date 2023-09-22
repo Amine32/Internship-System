@@ -13,7 +13,9 @@ public class StudentDto {
 
     private List<ApplicationDto> applications;
 
-    private String companyName;
+    private List<String> languages;
 
-    private String position;
+    private List<String> positions;
+
+    private List<String> technologies;
 }

@@ -13,7 +13,7 @@ public class ApplicationDto {
 
     private String studentId;
 
-    private List<String> status;
+    private List<StatusHistoryDto> statusHistory;
 
     private List<InterviewDto> interviews;
 
