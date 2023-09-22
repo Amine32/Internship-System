@@ -45,7 +45,7 @@ public class StudentService {
         // Call the validation endpoint
         UserIdDto userIdDto = webClientBuilder.build()
                 .get()
-                .uri("https://hits-user-service.onrender.com/api/users/jwt")
+                .uri("https://localhost:8080/user-service/api/users/jwt")
                 .headers(httpHeaders -> httpHeaders.addAll(headers))
                 .retrieve()
                 .bodyToMono(UserIdDto.class)

@@ -18,13 +18,16 @@ public class ApiGatewayApplication {
     public RouteLocator myRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route(p -> p
-                        .path("/company-service/**")
+                        .path("/user-service/**")
+                        .filters(f -> f.stripPrefix(1))
                         .uri("http://localhost:8081/"))
                 .route(p -> p
                         .path("/internship-application/**")
+                        .filters(f -> f.stripPrefix(1))
                         .uri("http://localhost:8082/"))
                 .route(p -> p
-                        .path("/user-service/**")
+                        .path("/company-service/**")
+                        .filters(f -> f.stripPrefix(1))
                         .uri("http://localhost:8083/"))
                 .build();
     }
