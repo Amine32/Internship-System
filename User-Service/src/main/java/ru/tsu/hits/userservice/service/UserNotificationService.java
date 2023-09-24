@@ -17,7 +17,7 @@ public class UserNotificationService {
     public void notifyStudentService(UserEntity user) {
         webClientBuilder.build()
                 .post()
-                .uri("https://application-service/api/students/" + user.getId())
+                .uri("http://localhost:8080/application-service/api/students/" + user.getId())
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();
@@ -34,7 +34,7 @@ public class UserNotificationService {
 
             webClientBuilder.build()
                     .delete()
-                    .uri("https://application-service/api/students/" + id)
+                    .uri("http://localhost:8080/application-service/api/students/" + id)
                     .headers(httpHeaders -> httpHeaders.addAll(headers))
                     .retrieve()
                     .bodyToMono(Void.class)
