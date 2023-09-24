@@ -24,4 +24,6 @@ public class ApplicationEntity {
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL)
     private List<InterviewEntity> interviews;
+
+    private int priority;
 }
