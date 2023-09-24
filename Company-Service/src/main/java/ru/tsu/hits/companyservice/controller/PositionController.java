@@ -10,7 +10,7 @@ import ru.tsu.hits.companyservice.service.PositionService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/positions")
+@RequestMapping("/api/positions")
 @RequiredArgsConstructor
 public class PositionController {
 

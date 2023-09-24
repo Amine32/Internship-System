@@ -9,7 +9,7 @@ import ru.tsu.hits.companyservice.service.CompanyService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/companies")
+@RequestMapping("/api/companies")
 @RequiredArgsConstructor
 public class CompanyController {
 
