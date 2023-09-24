@@ -50,7 +50,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 // Call the validation endpoint
                 Boolean isValid = webClientBuilder.build()
                         .post()
-                        .uri("https://hits-user-service.onrender.com/api/validate")
+                        .uri("http://localhost:8080/user-service/api/validate")
                         .body(Mono.just(jwt), String.class)
                         .retrieve()
                         .bodyToMono(Boolean.class)
