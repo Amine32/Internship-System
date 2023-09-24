@@ -22,7 +22,7 @@ public class ApiGatewayApplication {
                         .filters(f -> f.stripPrefix(1))
                         .uri("http://localhost:8081/"))
                 .route(p -> p
-                        .path("/internship-application/**")
+                        .path("/application-service/**")
                         .filters(f -> f.stripPrefix(1))
                         .uri("http://localhost:8082/"))
                 .route(p -> p
