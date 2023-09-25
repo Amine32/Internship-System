@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ApplicationRepository extends JpaRepository<ApplicationEntity, String> {
     List<ApplicationEntity> findAllByPositionId(String positionId);
+
+    Integer countByPositionId(String positionId);
 }

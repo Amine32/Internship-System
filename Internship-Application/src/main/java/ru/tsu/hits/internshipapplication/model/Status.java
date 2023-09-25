@@ -1,5 +1,8 @@
 package ru.tsu.hits.internshipapplication.model;
 
+import lombok.Getter;
+
+@Getter
 public enum Status {
     NEW("Подана заявка"),
     REJECTED("Отказано"),
@@ -15,7 +18,4 @@ public enum Status {
         this.russian = russian;
     }
 
-    public String getRussian() {
-        return this.russian;
-    }
 }

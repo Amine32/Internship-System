@@ -1,18 +1,72 @@
 package ru.tsu.hits.companyservice.dto.converter;
 
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 import ru.tsu.hits.companyservice.dto.CreatePositionDto;
 import ru.tsu.hits.companyservice.dto.PositionDto;
 import ru.tsu.hits.companyservice.model.PositionEntity;
 
+import java.util.Collections;
+import java.util.List;
+
 @Component
+@RequiredArgsConstructor
 public class PositionDtoConverter {
 
     private static final ModelMapper modelMapper = new ModelMapper();
+    private final WebClient.Builder webClientBuilder;
+
+    static {
+        // Create a TypeMap for custom mapping
+        TypeMap<PositionEntity, PositionDto> typeMap = modelMapper.createTypeMap(PositionEntity.class, PositionDto.class);
+        typeMap.addMappings(mapper -> {
+            mapper.map(PositionEntity::getStatus, PositionDto::setStatus); // Enum mapping
+            mapper.map(src -> src.getCompany().getName(), PositionDto::setCompanyName); // Nested property mapping
+        });
+    }
 
     public PositionDto convertToDto(PositionEntity entity) {
-        return modelMapper.map(entity, PositionDto.class);
+        PositionDto dto = modelMapper.map(entity, PositionDto.class);
+
+        WebClient webClient = webClientBuilder.build();
+
+        // Fetch name for Language by ID
+        List<String> singleLanguageId = Collections.singletonList(entity.getLanguageId());
+        List<String> languageNames = webClient.post()
+                .uri("http://localhost:8080/stack-service/api/languages/namesByIds")
+                .body(BodyInserters.fromValue(singleLanguageId))
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
+                .block();
+        assert languageNames != null;
+        dto.setLanguage(languageNames.get(0)); // Assuming there is only one
+
+        // Similar for Stack
+        List<String> singleStackId = Collections.singletonList(entity.getStackId());
+        List<String> stackNames = webClient.post()
+                .uri("http://localhost:8080/stack-service/api/stacks/namesByIds")
+                .body(BodyInserters.fromValue(singleStackId))
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
+                .block();
+        assert stackNames != null;
+        dto.setStack(stackNames.get(0));
+
+        // Fetch names for Technologies by IDs
+        List<String> technologyNames = webClient.post()
+                .uri("http://localhost:8080/stack-service/api/technologies/namesByIds")
+                .body(BodyInserters.fromValue(entity.getTechnologiesIds()))
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
+                .block();
+        dto.setTechnologies(technologyNames);
+
+        return dto;
     }
 
     public PositionEntity convertToEntity(CreatePositionDto dto) {

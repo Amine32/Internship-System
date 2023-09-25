@@ -23,7 +23,6 @@ public class CompanyService {
 
     public CompanyDto createCompany(CreateUpdateCompanyDto dto) {
         CompanyEntity newCompany = dtoConverters.convertToEntity(dto);
-        newCompany.setId(UUID.randomUUID().toString());
         companyRepository.save(newCompany);
         return dtoConverters.convertToDto(newCompany);
     }

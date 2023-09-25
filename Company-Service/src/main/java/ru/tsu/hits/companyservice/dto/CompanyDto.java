@@ -2,6 +2,7 @@ package ru.tsu.hits.companyservice.dto;
 
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class CompanyDto {
@@ -15,5 +16,6 @@ public class CompanyDto {
     private String logoURL;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<PositionDto> positions;
 }
 

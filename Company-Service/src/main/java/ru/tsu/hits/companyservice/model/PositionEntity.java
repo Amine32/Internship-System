@@ -17,14 +17,18 @@ public class PositionEntity {
     private String title;
     private String description;
 
-    @ElementCollection
-    @CollectionTable(name = "requirements", joinColumns = @JoinColumn(name = "position_id"))
-    private List<String> requirements;
-
     private int numberOfPlaces;
     private int numberOfPlacesLeft;
     private String salaryRange;
-    private String status;
+    private PositionStatus status;
+
+    private int numberOfApplications;
+
+    private String stackId;
+    private String languageId;
+    @ElementCollection
+    private List<String> technologiesIds;
+
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -32,7 +36,7 @@ public class PositionEntity {
     @PrePersist
     public void prePersist() {
         this.numberOfPlacesLeft = this.numberOfPlaces;
-        this.status = "OPEN";
+        this.status = PositionStatus.OPEN; //Set initial status to OPEN
         createdAt = LocalDateTime.now();
     }
 

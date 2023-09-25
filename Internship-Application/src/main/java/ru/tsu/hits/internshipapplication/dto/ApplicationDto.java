@@ -20,4 +20,6 @@ public class ApplicationDto {
     private String position;
 
     private String companyName;
+
+    private int priority;
 }

@@ -40,5 +40,10 @@ public class PositionController {
     public void deletePosition(@PathVariable String id) {
         positionService.deletePosition(id);
     }
+
+    @PutMapping("/{id}/decrementPlacesLeft")
+    public void decrementPlacesLeft(@PathVariable String id) {
+        positionService.decrementPlacesLeft(id);
+    }
 }
 

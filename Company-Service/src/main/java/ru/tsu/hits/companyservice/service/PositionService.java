@@ -1,7 +1,12 @@
 package ru.tsu.hits.companyservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import ru.tsu.hits.companyservice.dto.CreatePositionDto;
 import ru.tsu.hits.companyservice.dto.PositionDto;
 import ru.tsu.hits.companyservice.dto.UpdatePositionDto;
@@ -11,6 +16,7 @@ import ru.tsu.hits.companyservice.model.PositionEntity;
 import ru.tsu.hits.companyservice.repository.PositionRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +27,8 @@ public class PositionService {
 
     private final PositionDtoConverter dtoConverter;
 
+    private static final Logger logger = LoggerFactory.getLogger(PositionService.class);
+
     public PositionDto createPosition(CreatePositionDto createPositionDto) {
         PositionEntity newPosition = dtoConverter.convertToEntity(createPositionDto);
         positionRepository.save(newPosition);
@@ -29,6 +37,37 @@ public class PositionService {
 
     public PositionDto getPositionById(String id) {
         PositionEntity position = positionRepository.findById(id).orElseThrow(() -> new PositionNotFoundException(id));
+
+        // Call the Application microservice to get the current number of applications
+        WebClient webClient = WebClient.builder().baseUrl("http://localhost:8080/application-service/").build();
+        try {
+            Integer currentNumberOfApplications = webClient
+                    .get()
+                    .uri("/api/applications/position/{positionId}/count", id)
+                    .retrieve()
+                    .bodyToMono(Integer.class)
+                    .block();
+
+            // Safely unbox Integer to int, using 0 as default value
+            int numberOfApplications = Optional.ofNullable(currentNumberOfApplications).orElse(0);
+
+            // Update and save the numberOfApplications
+            position.setNumberOfApplications(numberOfApplications);
+            positionRepository.save(position);
+
+        } catch (WebClientResponseException e) {
+            // Log the status code and the reason
+            logger.error("WebClientResponseException while fetching application count. Status code: {}, Reason: {}", e.getStatusCode(), e.getResponseBodyAsString());
+
+        } catch (WebClientException e) {
+            // Log WebClient related exceptions
+            logger.error("WebClientException while fetching application count: {}", e.getMessage());
+
+        } catch (Exception e) {
+            // Log other exceptions
+            logger.error("An unexpected error occurred while fetching application count: {}", e.getMessage());
+        }
+
         return dtoConverter.convertToDto(position);
     }
 
@@ -44,9 +83,11 @@ public class PositionService {
 
         existingPosition.setTitle(dto.getTitle());
         existingPosition.setDescription(dto.getDescription());
-        existingPosition.setRequirements(dto.getRequirements());
         existingPosition.setNumberOfPlaces(dto.getNumberOfPlaces());
         existingPosition.setSalaryRange(dto.getSalaryRange());
+        existingPosition.setLanguageId(dto.getLanguageId());
+        existingPosition.setStackId(dto.getStackId());
+        existingPosition.setTechnologiesIds(dto.getTechnologiesIds());
 
         positionRepository.save(existingPosition);
         return dtoConverter.convertToDto(existingPosition);
@@ -55,6 +96,12 @@ public class PositionService {
     public void deletePosition(String id) {
         PositionEntity existingPosition = positionRepository.findById(id).orElseThrow(() -> new PositionNotFoundException(id));
         positionRepository.delete(existingPosition);
+    }
+
+    public void decrementPlacesLeft(String id) {
+        PositionEntity position = positionRepository.findById(id).orElseThrow(() -> new PositionNotFoundException(id));
+        position.setNumberOfPlacesLeft(Math.max(0, position.getNumberOfPlacesLeft() - 1));
+        positionRepository.save(position);
     }
 }
 

@@ -3,7 +3,9 @@ package ru.tsu.hits.internshipapplication.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 import ru.tsu.hits.internshipapplication.dto.ApplicationDto;
+import ru.tsu.hits.internshipapplication.dto.ApplicationPriorityDto;
 import ru.tsu.hits.internshipapplication.dto.converter.ApplicationDtoConverter;
 import ru.tsu.hits.internshipapplication.exception.ApplicationNotFoundException;
 import ru.tsu.hits.internshipapplication.model.*;
@@ -80,6 +82,17 @@ public class ApplicationService {
         application.getStatusHistory().add(statusHistory);
         application = applicationRepository.save(application);
 
+        if(Status.valueOf(status) == Status.OFFER_ACCEPTED) {
+            //Call the company microservice to update the number of places left
+            WebClient webClient = WebClient.builder().baseUrl("http://localhost:8080/company-service/").build();
+            webClient
+                    .put()
+                    .uri("/api/positions/{positionId}/decrementPlacesLeft", application.getPositionId())
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .block();
+        }
+
         return ApplicationDtoConverter.convertEntityToDto(application);
     }
 
@@ -112,5 +125,24 @@ public class ApplicationService {
 
     public void deleteApplicationById(String applicationId) {
         applicationRepository.deleteById(applicationId);
+    }
+
+    public Integer getCountByPositionId(String positionId) {
+        return applicationRepository.countByPositionId(positionId);
+    }
+
+    public void updatePriorities(String positionId, List<ApplicationPriorityDto> priorityList) {
+        for (ApplicationPriorityDto dto : priorityList) {
+            ApplicationEntity application = applicationRepository.findById(dto.getApplicationId())
+                    .orElseThrow(() -> new ApplicationNotFoundException(dto.getApplicationId()));
+
+            // Validate that the application belongs to the specified position
+            if (!application.getPositionId().equals(positionId)) {
+                throw new IllegalArgumentException("Application " + dto.getApplicationId() + " does not belong to position " + positionId);
+            }
+
+            application.setPriority(dto.getPriority());
+            applicationRepository.save(application);
+        }
     }
 }

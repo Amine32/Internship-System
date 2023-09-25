@@ -7,9 +7,11 @@ import java.util.List;
 public class CreatePositionDto {
     private String title;
     private String description;
-    private List<String> requirements;
     private int numberOfPlaces;
     private String salaryRange;
     private String companyId;
+    private String languageId;
+    private String stackId;
+    private List<String> technologiesIds;
 }
 

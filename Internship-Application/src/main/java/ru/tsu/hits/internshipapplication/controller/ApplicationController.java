@@ -3,6 +3,7 @@ package ru.tsu.hits.internshipapplication.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.internshipapplication.dto.ApplicationDto;
+import ru.tsu.hits.internshipapplication.dto.ApplicationPriorityDto;
 import ru.tsu.hits.internshipapplication.service.ApplicationService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,5 +39,15 @@ public class ApplicationController {
     @DeleteMapping("/{applicationId}")
     public void deleteApplication(@PathVariable String applicationId) {
         applicationService.deleteApplicationById(applicationId);
+    }
+
+    @GetMapping("positions/{positionId}/count")
+    public Integer getCountByPositionId(@PathVariable String positionId) {
+        return applicationService.getCountByPositionId(positionId);
+    }
+
+    @PutMapping("/position/{positionId}/updatePriorities")
+    public void updatePriorities(@PathVariable String positionId, @RequestBody List<ApplicationPriorityDto> priorityList) {
+        applicationService.updatePriorities(positionId, priorityList);
     }
 }
