@@ -3,7 +3,8 @@ package ru.tsu.hits.stackservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.tsu.hits.stackservice.model.LanguageEntity;
+import ru.tsu.hits.stackservice.dto.CreateUpdateLanguageDto;
+import ru.tsu.hits.stackservice.dto.LanguageDto;
 import ru.tsu.hits.stackservice.service.LanguageService;
 
 import java.util.List;
@@ -12,21 +13,31 @@ import java.util.List;
 @RequestMapping("/api/languages")
 public class LanguageController {
 
-    private LanguageService languageService;
+    private final LanguageService languageService;
 
     @GetMapping("/")
-    public List<LanguageEntity> getAllLanguages() {
+    public List<LanguageDto> getAllLanguages() {
         return languageService.getAllLanguages();
     }
 
     @GetMapping("/byPosition/{positionName}")
-    public List<LanguageEntity> getAllLanguagesByPosition(@PathVariable String positionName) {
-        return languageService.getAllLanguagesRelatedToPosition(positionName);
+    public List<LanguageDto> getAllLanguagesByPosition(@PathVariable String positionName) {
+        return languageService.getAllLanguagesRelatedToStack(positionName);
     }
 
     @PostMapping("/byIds")
-    public List<LanguageEntity> getAllLanguagesByIds(@RequestBody List<String> ids) {
+    public List<LanguageDto> getAllLanguagesByIds(@RequestBody List<Long> ids) {
         return languageService.getAllLanguagesByIds(ids);
+    }
+
+    @PostMapping("/namesByIds")
+    public List<String> getLanguageNamesByIds(@RequestBody List<Long> ids) {
+        return languageService.getLanguageNamesByIds(ids);
+    }
+
+    @PostMapping
+    public LanguageDto createLanguage(@RequestBody CreateUpdateLanguageDto dto) {
+        return languageService.createLanguage(dto);
     }
 }
 

@@ -10,15 +10,16 @@ import javax.persistence.*;
 public class TechnologyEntity {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "position_id", nullable = false)
-    private PositionEntity relatedPosition;
+    @JoinColumn(name = "stack_id", nullable = false)
+    private StackEntity relatedStack;
 
     @ManyToOne
     @JoinColumn(name = "language_id", nullable = false)
-    private LanguageEntity relatedLanguages;
+    private LanguageEntity relatedLanguage;
 }

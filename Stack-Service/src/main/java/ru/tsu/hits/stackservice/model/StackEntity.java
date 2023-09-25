@@ -7,18 +7,19 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name = "positions")
-public class PositionEntity {
+@Table(name = "stacks")
+public class StackEntity {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String name;
 
     @ManyToMany
     @JoinTable(
-            name = "position_languages",
-            joinColumns = @JoinColumn(name = "position_id"),
+            name = "stack_languages",
+            joinColumns = @JoinColumn(name = "stack_id"),
             inverseJoinColumns = @JoinColumn(name = "language_id")
     )
     private List<LanguageEntity> relatedLanguages;

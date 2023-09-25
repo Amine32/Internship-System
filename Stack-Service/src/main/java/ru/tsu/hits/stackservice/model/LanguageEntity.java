@@ -2,10 +2,7 @@ package ru.tsu.hits.stackservice.model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -13,10 +10,11 @@ import java.util.List;
 @Table(name = "languages")
 public class LanguageEntity {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String name;
 
     @ManyToMany(mappedBy = "relatedLanguages")
-    private List<PositionEntity> positions;
+    private List<StackEntity> relatedStacks;
 }

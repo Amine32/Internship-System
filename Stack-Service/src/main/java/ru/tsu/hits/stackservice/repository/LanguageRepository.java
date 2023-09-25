@@ -5,6 +5,6 @@ import ru.tsu.hits.stackservice.model.LanguageEntity;
 
 import java.util.List;
 
-public interface LanguageRepository extends JpaRepository<LanguageEntity, String> {
-    List<LanguageEntity> findAllByPositions_Name(String positionName);
+public interface LanguageRepository extends JpaRepository<LanguageEntity, Long> {
+    List<LanguageEntity> findAllByRelatedStacks_Name(String stackName);
 }
