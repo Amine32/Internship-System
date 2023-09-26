@@ -9,7 +9,9 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.tsu.hits.companyservice.dto.CreatePositionDto;
 import ru.tsu.hits.companyservice.dto.PositionDto;
+import ru.tsu.hits.companyservice.model.CompanyEntity;
 import ru.tsu.hits.companyservice.model.PositionEntity;
+import ru.tsu.hits.companyservice.service.CompanyService;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +22,7 @@ public class PositionDtoConverter {
 
     private static final ModelMapper modelMapper = new ModelMapper();
     private final WebClient.Builder webClientBuilder;
+    private final CompanyService companyService;
 
     static {
         // Create a TypeMap for custom mapping
@@ -28,6 +31,10 @@ public class PositionDtoConverter {
             mapper.map(PositionEntity::getStatus, PositionDto::setStatus); // Enum mapping
             mapper.map(src -> src.getCompany().getName(), PositionDto::setCompanyName); // Nested property mapping
         });
+
+        // New TypeMap to handle CreatePositionDto -> PositionEntity, skipping the 'id' field
+        modelMapper.createTypeMap(CreatePositionDto.class, PositionEntity.class)
+                .addMappings(mapper -> mapper.skip(PositionEntity::setId));
     }
 
     public PositionDto convertToDto(PositionEntity entity) {
@@ -70,6 +77,15 @@ public class PositionDtoConverter {
     }
 
     public PositionEntity convertToEntity(CreatePositionDto dto) {
-        return modelMapper.map(dto, PositionEntity.class);
+        PositionEntity entity = modelMapper.map(dto, PositionEntity.class);
+
+        // Initialize numberOfApplications to 0
+        entity.setNumberOfApplications(0);
+
+        // Fetch CompanyEntity based on dto.getCompanyId() and set it
+        CompanyEntity companyEntity = companyService.getCompanyEntityById(dto.getCompanyId());
+        entity.setCompany(companyEntity);
+
+        return entity;
     }
 }

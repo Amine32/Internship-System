@@ -28,8 +28,7 @@ public class CompanyService {
     }
 
     public CompanyDto getCompanyById(String id) {
-        CompanyEntity company = companyRepository.findById(id).orElseThrow(() -> new CompanyNotFoundException(id));
-        return dtoConverters.convertToDto(company);
+        return dtoConverters.convertToDto(getCompanyEntityById(id));
     }
 
     public List<CompanyDto> getAllCompanies() {
@@ -56,6 +55,10 @@ public class CompanyService {
     public void deleteCompany(String id) {
         CompanyEntity existingCompany = companyRepository.findById(id).orElseThrow(() -> new CompanyNotFoundException(id));
         companyRepository.delete(existingCompany);
+    }
+
+    public CompanyEntity getCompanyEntityById(String id) {
+        return companyRepository.findById(id).orElseThrow(() -> new CompanyNotFoundException(id));
     }
 }
 
