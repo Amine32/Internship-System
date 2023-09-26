@@ -17,4 +17,7 @@ public class LanguageEntity {
 
     @ManyToMany(mappedBy = "relatedLanguages")
     private List<StackEntity> relatedStacks;
+
+    @ManyToMany(mappedBy = "relatedLanguages")
+    private List<TechnologyEntity> relatedTechnologies;
 }

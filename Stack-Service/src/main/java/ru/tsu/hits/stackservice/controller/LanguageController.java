@@ -15,14 +15,14 @@ public class LanguageController {
 
     private final LanguageService languageService;
 
-    @GetMapping("/")
-    public List<LanguageDto> getAllLanguages() {
-        return languageService.getAllLanguages();
+    @PostMapping
+    public LanguageDto createOrUpdateLanguage(@RequestBody CreateUpdateLanguageDto dto) {
+        return languageService.createOrUpdateLanguage(dto);
     }
 
-    @GetMapping("/byPosition/{positionName}")
-    public List<LanguageDto> getAllLanguagesByPosition(@PathVariable String positionName) {
-        return languageService.getAllLanguagesRelatedToStack(positionName);
+    @GetMapping
+    public List<LanguageDto> getAllLanguages() {
+        return languageService.getAllLanguages();
     }
 
     @PostMapping("/byIds")
@@ -35,9 +35,15 @@ public class LanguageController {
         return languageService.getLanguageNamesByIds(ids);
     }
 
-    @PostMapping
-    public LanguageDto createLanguage(@RequestBody CreateUpdateLanguageDto dto) {
-        return languageService.createLanguage(dto);
+    @GetMapping("/byStack/{stackName}")
+    public List<LanguageDto> getAllLanguagesByStackName(@PathVariable String stackName) {
+        return languageService.getAllLanguagesByStackName(stackName);
     }
+
+    @GetMapping("/byTechnology/{technologyName}")
+    public List<LanguageDto> getAllLanguagesByTechnologyName(@PathVariable String technologyName) {
+        return languageService.getAllLanguagesByTechnologyName(technologyName);
+    }
+
 }
 

@@ -15,7 +15,12 @@ public class StackController {
 
     private final StackService stackService;
 
-    @GetMapping("/")
+    @PostMapping
+    public StackDto createOrUpdateStack(@RequestBody CreateUpdateStackDto dto) {
+        return stackService.createOrUpdateStack(dto);
+    }
+
+    @GetMapping
     public List<StackDto> getAllStacks() {
         return stackService.getAllStacks();
     }
@@ -30,9 +35,14 @@ public class StackController {
         return stackService.getStackNamesByIds(ids);
     }
 
-    @PostMapping
-    public StackDto createStack(@RequestBody CreateUpdateStackDto dto) {
-        return stackService.createStack(dto);
+    @GetMapping("/byLanguage/{languageName}")
+    public List<StackDto> getAllStacksByLanguageName(@PathVariable String languageName) {
+        return stackService.getAllStacksByLanguageName(languageName);
+    }
+
+    @GetMapping("/byTechnology/{technologyName}")
+    public List<StackDto> getAllStacksByTechnologyName(@PathVariable String technologyName) {
+        return stackService.getAllStacksByTechnologyName(technologyName);
     }
 }
 

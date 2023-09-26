@@ -12,4 +12,6 @@ public class StackDto {
     private String name;
 
     private List<Long> relatedLanguageIds;
+
+    private List<Long> relatedTechnologyIds;
 }

@@ -10,4 +10,6 @@ public class CreateUpdateStackDto {
     private String name;
 
     private List<Long> relatedLanguageIds;
+
+    private List<Long> relatedTechnologyIds;
 }

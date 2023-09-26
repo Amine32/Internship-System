@@ -15,7 +15,12 @@ public class TechnologyController {
 
     private final TechnologyService technologyService;
 
-    @GetMapping("/")
+    @PostMapping
+    public TechnologyDto createOrUpdateTechnology(@RequestBody CreateUpdateTechnologyDto dto) {
+        return technologyService.createOrUpdateTechnology(dto);
+    }
+
+    @GetMapping
     public List<TechnologyDto> getAllTechnologies() {
         return technologyService.getAllTechnologies();
     }
@@ -30,9 +35,19 @@ public class TechnologyController {
         return technologyService.getTechnologyNamesByIds(ids);
     }
 
-    @PostMapping
-    public TechnologyDto createTechnology(@RequestBody CreateUpdateTechnologyDto dto) {
-        return technologyService.createTechnology(dto);
+    @GetMapping("/byLanguage/{languageName}")
+    public List<TechnologyDto> getAllTechnologiesByLanguageName(@PathVariable String languageName) {
+        return technologyService.getAllTechnologiesByLanguageName(languageName);
+    }
+
+    @GetMapping("/byStack/{stackName}")
+    public List<TechnologyDto> getAllTechnologiesByStackName(@PathVariable String stackName) {
+        return technologyService.getAllTechnologiesByStackName(stackName);
+    }
+
+    @GetMapping("/byStackAndLanguage/{stackName}/{languageName}")
+    public List<TechnologyDto> getAllTechnologiesByStackAndLanguageName(@PathVariable String stackName, @PathVariable String languageName) {
+        return technologyService.getAllTechnologiesByStackAndLanguageName(stackName, languageName);
     }
 }
 

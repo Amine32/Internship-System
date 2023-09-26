@@ -7,8 +7,10 @@ import ru.tsu.hits.stackservice.dto.StackDto;
 import ru.tsu.hits.stackservice.dto.converter.StackDtoConverter;
 import ru.tsu.hits.stackservice.model.LanguageEntity;
 import ru.tsu.hits.stackservice.model.StackEntity;
+import ru.tsu.hits.stackservice.model.TechnologyEntity;
 import ru.tsu.hits.stackservice.repository.LanguageRepository;
 import ru.tsu.hits.stackservice.repository.StackRepository;
+import ru.tsu.hits.stackservice.repository.TechnologyRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +21,17 @@ public class StackService {
 
     private final StackRepository stackRepository;
     private final LanguageRepository languageRepository;
+    private final TechnologyRepository technologyRepository;
+
+    public StackDto createOrUpdateStack(CreateUpdateStackDto dto) {
+        StackEntity entity = StackDtoConverter.dtoToEntity(dto);
+        List<LanguageEntity> relatedLanguages = languageRepository.findAllById(dto.getRelatedLanguageIds());
+        List<TechnologyEntity> relatedTechnologies = technologyRepository.findAllById(dto.getRelatedTechnologyIds());
+        entity.setRelatedLanguages(relatedLanguages);
+        entity.setRelatedTechnologies(relatedTechnologies);
+        entity = stackRepository.save(entity);
+        return StackDtoConverter.entityToDto(entity);
+    }
 
     public List<StackDto> getAllStacks() {
         return stackRepository.findAll().stream()
@@ -38,14 +51,15 @@ public class StackService {
                 .collect(Collectors.toList());
     }
 
-    public StackDto createStack(CreateUpdateStackDto dto) {
-        StackEntity entity = StackDtoConverter.dtoToEntity(dto);
+    public List<StackDto> getAllStacksByLanguageName(String languageName) {
+        return stackRepository.findAllByRelatedLanguages_Name(languageName).stream()
+                .map(StackDtoConverter::entityToDto)
+                .collect(Collectors.toList());
+    }
 
-        // Fetch and set related languages
-        List<LanguageEntity> relatedLanguages = languageRepository.findAllById(dto.getRelatedLanguageIds());
-        entity.setRelatedLanguages(relatedLanguages);
-
-        entity = stackRepository.save(entity);
-        return StackDtoConverter.entityToDto(entity);
+    public List<StackDto> getAllStacksByTechnologyName(String technologyName) {
+        return stackRepository.findAllByRelatedTechnologies_Name(technologyName).stream()
+                .map(StackDtoConverter::entityToDto)
+                .collect(Collectors.toList());
     }
 }

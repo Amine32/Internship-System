@@ -12,4 +12,6 @@ public class LanguageDto {
     private String name;
 
     private List<Long> relatedStackIds;
+
+    private List<Long> relatedTechnologyIds;
 }

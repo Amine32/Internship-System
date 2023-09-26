@@ -23,4 +23,7 @@ public class StackEntity {
             inverseJoinColumns = @JoinColumn(name = "language_id")
     )
     private List<LanguageEntity> relatedLanguages;
+
+    @ManyToMany(mappedBy = "relatedStacks")
+    private List<TechnologyEntity> relatedTechnologies;
 }

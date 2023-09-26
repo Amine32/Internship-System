@@ -12,7 +12,6 @@ import ru.tsu.hits.stackservice.repository.LanguageRepository;
 import ru.tsu.hits.stackservice.repository.StackRepository;
 import ru.tsu.hits.stackservice.repository.TechnologyRepository;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +22,16 @@ public class TechnologyService {
     private final TechnologyRepository technologyRepository;
     private final LanguageRepository languageRepository;
     private final StackRepository stackRepository;
+
+    public TechnologyDto createOrUpdateTechnology(CreateUpdateTechnologyDto dto) {
+        TechnologyEntity entity = TechnologyDtoConverter.dtoToEntity(dto);
+        List<StackEntity> relatedStacks = stackRepository.findAllById(dto.getRelatedStackIds());
+        List<LanguageEntity> relatedLanguages = languageRepository.findAllById(dto.getRelatedLanguageIds());
+        entity.setRelatedStacks(relatedStacks);
+        entity.setRelatedLanguages(relatedLanguages);
+        entity = technologyRepository.save(entity);
+        return TechnologyDtoConverter.entityToDto(entity);
+    }
 
     public List<TechnologyDto> getAllTechnologies() {
         return technologyRepository.findAll().stream()
@@ -42,19 +51,21 @@ public class TechnologyService {
                 .collect(Collectors.toList());
     }
 
-    public TechnologyDto createTechnology(CreateUpdateTechnologyDto dto) {
-        TechnologyEntity entity = TechnologyDtoConverter.dtoToEntity(dto);
+    public List<TechnologyDto> getAllTechnologiesByLanguageName(String languageName) {
+        return technologyRepository.findAllByRelatedLanguages_Name(languageName).stream()
+                .map(TechnologyDtoConverter::entityToDto)
+                .collect(Collectors.toList());
+    }
 
-        // Fetch and set related stack and language
-        StackEntity relatedStack = stackRepository.findById(dto.getRelatedStackId())
-                .orElseThrow(() -> new EntityNotFoundException("Stack not found"));
-        LanguageEntity relatedLanguage = languageRepository.findById(dto.getRelatedLanguageId())
-                .orElseThrow(() -> new EntityNotFoundException("Language not found"));
+    public List<TechnologyDto> getAllTechnologiesByStackName(String stackName) {
+        return technologyRepository.findAllByRelatedStacks_Name(stackName).stream()
+                .map(TechnologyDtoConverter::entityToDto)
+                .collect(Collectors.toList());
+    }
 
-        entity.setRelatedStack(relatedStack);
-        entity.setRelatedLanguage(relatedLanguage);
-
-        entity = technologyRepository.save(entity);
-        return TechnologyDtoConverter.entityToDto(entity);
+    public List<TechnologyDto> getAllTechnologiesByStackAndLanguageName(String stackName, String languageName) {
+        return technologyRepository.findAllByRelatedStacks_NameAndRelatedLanguages_Name(stackName, languageName).stream()
+                .map(TechnologyDtoConverter::entityToDto)
+                .collect(Collectors.toList());
     }
 }

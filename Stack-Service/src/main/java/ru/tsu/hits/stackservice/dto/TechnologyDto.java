@@ -2,6 +2,8 @@ package ru.tsu.hits.stackservice.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class TechnologyDto {
 
@@ -9,7 +11,7 @@ public class TechnologyDto {
 
     private String name;
 
-    private Long relatedStackId;
+    private List<Long> relatedStackIds;
 
-    private Long relatedLanguageId;
+    private List<Long> relatedLanguageIds;
 }
