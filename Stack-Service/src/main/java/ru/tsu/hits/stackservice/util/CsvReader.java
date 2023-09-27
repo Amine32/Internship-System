@@ -18,7 +18,7 @@ public class CsvReader {
         List<String> items = new ArrayList<>();
         try (
                 Reader reader = new InputStreamReader(inputStream);
-                CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+                CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT)
         ) {
             for (CSVRecord csvRecord : csvParser) {
                 String itemName = csvRecord.get(0);
@@ -32,7 +32,7 @@ public class CsvReader {
         List<Relationship> relationships = new ArrayList<>();
         try (
                 Reader reader = new InputStreamReader(inputStream);
-                CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+                CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT)
         ) {
             for (CSVRecord csvRecord : csvParser) {
                 String relationshipStr = csvRecord.get(0);  // Assuming the CSV column is named 'relationship'

@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -85,6 +86,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean isExcluded(String path, String method) {
+        // If it's a GET request, return true (i.e., exclude it from JWT check)
+        if (HttpMethod.GET.toString().equals(method)) {
+            return true;
+        }
+
+        // If it's a POST request, return true (i.e., exclude it from JWT check)
+        if (HttpMethod.POST.toString().equals(method)) {
+            return true;
+        }
 
         // Exclude other paths for all methods
         for (String excludedPath : EXCLUDED_PATHS) {

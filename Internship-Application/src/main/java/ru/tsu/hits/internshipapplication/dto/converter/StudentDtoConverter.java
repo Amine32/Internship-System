@@ -21,7 +21,7 @@ public class StudentDtoConverter {
         StudentDto dto = modelMapper.map(student, StudentDto.class);
         List<ApplicationEntity> applications = student.getApplications();
         List<ApplicationDto> applicationList = applications.stream()
-                .map(ApplicationDtoConverter::convertEntityToDto)
+                .map(applicationEntity -> ApplicationDtoConverter.convertEntityToDto(applicationEntity, request))
                 .collect(Collectors.toList());
 
         dto.setApplications(applicationList);

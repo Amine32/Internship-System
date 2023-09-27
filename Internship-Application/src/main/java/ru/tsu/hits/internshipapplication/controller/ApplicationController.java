@@ -22,18 +22,18 @@ public class ApplicationController {
     }
 
     @GetMapping("/{applicationId}")
-    public ApplicationDto getApplicationById(@PathVariable String applicationId) {
-        return applicationService.getApplicationDtoById(applicationId);
+    public ApplicationDto getApplicationById(@PathVariable String applicationId, HttpServletRequest request) {
+        return applicationService.getApplicationDtoById(applicationId, request);
     }
 
     @PostMapping("/{applicationId}/status/{status}")
-    public ApplicationDto addStatus(@PathVariable String applicationId, @PathVariable String status) {
-        return applicationService.addStatus(applicationId, status);
+    public ApplicationDto addStatus(@PathVariable String applicationId, @PathVariable String status, HttpServletRequest request) {
+        return applicationService.addStatus(applicationId, status, request);
     }
 
     @GetMapping("/position/{positionId}")
-    public List<ApplicationDto> getAllByPositionId(@PathVariable String positionId) {
-        return applicationService.getAllByPositionId(positionId);
+    public List<ApplicationDto> getAllByPositionId(@PathVariable String positionId, HttpServletRequest request) {
+        return applicationService.getAllByPositionId(positionId, request);
     }
 
     @DeleteMapping("/{applicationId}")

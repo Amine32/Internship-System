@@ -1,6 +1,7 @@
 package ru.tsu.hits.internshipapplication.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -53,12 +54,12 @@ public class ApplicationService {
 
         application = applicationRepository.save(application);
 
-        return ApplicationDtoConverter.convertEntityToDto(application);
+        return ApplicationDtoConverter.convertEntityToDto(application, request);
     }
 
     @Transactional(readOnly = true)
-    public ApplicationDto getApplicationDtoById(String applicationId) {
-        return ApplicationDtoConverter.convertEntityToDto(getApplicationById(applicationId));
+    public ApplicationDto getApplicationDtoById(String applicationId, HttpServletRequest request) {
+        return ApplicationDtoConverter.convertEntityToDto(getApplicationById(applicationId), request);
     }
 
     @Transactional(readOnly = true)
@@ -67,7 +68,7 @@ public class ApplicationService {
     }
 
     @Transactional
-    public ApplicationDto addStatus(String applicationId, String status) {
+    public ApplicationDto addStatus(String applicationId, String status, HttpServletRequest request) {
         ApplicationEntity application = getApplicationById(applicationId);
 
         StatusHistory statusHistory = new StatusHistory();
@@ -83,26 +84,31 @@ public class ApplicationService {
         application = applicationRepository.save(application);
 
         if(Status.valueOf(status) == Status.OFFER_ACCEPTED) {
+            // Create HttpHeaders instance and set the Authorization header
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", request.getHeader("Authorization"));
+
             //Call the company microservice to update the number of places left
-            WebClient webClient = WebClient.builder().baseUrl("http://localhost:8080/company-service/").build();
+            WebClient webClient = WebClient.builder().build();
             webClient
                     .put()
-                    .uri("/api/positions/{positionId}/decrementPlacesLeft", application.getPositionId())
+                    .uri("http://localhost:8080/company-service/api/positions/{positionId}/decrementPlacesLeft", application.getPositionId())
+                    .headers(httpHeaders -> httpHeaders.addAll(headers))
                     .retrieve()
                     .bodyToMono(Void.class)
                     .block();
         }
 
-        return ApplicationDtoConverter.convertEntityToDto(application);
+        return ApplicationDtoConverter.convertEntityToDto(application, request);
     }
 
 
     @Transactional(readOnly = true)
-    public List<ApplicationDto> getAllByPositionId(String positionId) {
+    public List<ApplicationDto> getAllByPositionId(String positionId, HttpServletRequest request) {
         List<ApplicationEntity> applications = applicationRepository.findAllByPositionId(positionId);
 
         return applications.stream()
-                .map(ApplicationDtoConverter::convertEntityToDto)
+                .map(applicationEntity -> ApplicationDtoConverter.convertEntityToDto(applicationEntity, request))
                 .collect(Collectors.toList());
     }
 

@@ -11,6 +11,7 @@ import ru.tsu.hits.internshipapplication.model.InterviewEntity;
 import ru.tsu.hits.internshipapplication.model.Status;
 import ru.tsu.hits.internshipapplication.repository.InterviewRepository;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
 @Service
@@ -21,7 +22,7 @@ public class InterviewService {
     private final ApplicationService applicationService;
 
     @Transactional
-    public InterviewDto createInterview(CreateUpdateInterviewDto dto, String applicationId) {
+    public InterviewDto createInterview(CreateUpdateInterviewDto dto, String applicationId, HttpServletRequest request) {
         InterviewEntity interviewEntity = InterviewDtoConverter.convertDtoToEntity(dto);
 
         interviewEntity.setId(UUID.randomUUID().toString());
@@ -30,7 +31,7 @@ public class InterviewService {
         interviewEntity = interviewRepository.save(interviewEntity);
 
         applicationService.addInterview(applicationId, interviewEntity);
-        applicationService.addStatus(applicationId, Status.INTERVIEW_IS_APPOINTED.toString());
+        applicationService.addStatus(applicationId, Status.INTERVIEW_IS_APPOINTED.toString(), request);
 
         return InterviewDtoConverter.convertEntityToDto(interviewEntity);
     }

@@ -25,6 +25,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/**").permitAll() // Permit all GET requests
+                .antMatchers(HttpMethod.POST, "/**").permitAll() // Permit all POST requests
                 .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**", "/v2/**", "/swagger-resources/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS,"/**").permitAll() // allow CORS preflight requests
                 .anyRequest().authenticated()

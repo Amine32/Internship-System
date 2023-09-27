@@ -7,6 +7,7 @@ import ru.tsu.hits.companyservice.dto.PositionDto;
 import ru.tsu.hits.companyservice.dto.UpdatePositionDto;
 import ru.tsu.hits.companyservice.service.PositionService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -22,8 +23,8 @@ public class PositionController {
     }
 
     @GetMapping("/{id}")
-    public PositionDto getPositionById(@PathVariable String id) {
-        return positionService.getPositionById(id);
+    public PositionDto getPositionById(@PathVariable String id, HttpServletRequest request) {
+        return positionService.getPositionById(id, request);
     }
 
     @GetMapping

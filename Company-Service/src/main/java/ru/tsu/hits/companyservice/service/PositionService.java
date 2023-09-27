@@ -3,6 +3,7 @@ package ru.tsu.hits.companyservice.service;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
@@ -15,6 +16,7 @@ import ru.tsu.hits.companyservice.exception.PositionNotFoundException;
 import ru.tsu.hits.companyservice.model.PositionEntity;
 import ru.tsu.hits.companyservice.repository.PositionRepository;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,15 +37,20 @@ public class PositionService {
         return dtoConverter.convertToDto(newPosition);
     }
 
-    public PositionDto getPositionById(String id) {
+    public PositionDto getPositionById(String id, HttpServletRequest request) {
         PositionEntity position = positionRepository.findById(id).orElseThrow(() -> new PositionNotFoundException(id));
 
+        // Create HttpHeaders instance and set the Authorization header
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", request.getHeader("Authorization"));
+
         // Call the Application microservice to get the current number of applications
-        WebClient webClient = WebClient.builder().baseUrl("http://localhost:8080/application-service/").build();
+        WebClient webClient = WebClient.builder().build();
         try {
             Integer currentNumberOfApplications = webClient
                     .get()
-                    .uri("/api/applications/position/{positionId}/count", id)
+                    .uri("http://localhost:8080/application-service/api/applications/position/{positionId}/count", id)
+                    .headers(httpHeaders -> httpHeaders.addAll(headers))
                     .retrieve()
                     .bodyToMono(Integer.class)
                     .block();
