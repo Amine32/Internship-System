@@ -24,10 +24,10 @@ public class PositionEntity {
 
     private int numberOfApplications;
 
-    private String stackId;
-    private String languageId;
+    private Long stackId;
+    private Long languageId;
     @ElementCollection
-    private List<String> technologiesIds;
+    private List<Long> technologiesIds;
 
 
     private LocalDateTime createdAt;

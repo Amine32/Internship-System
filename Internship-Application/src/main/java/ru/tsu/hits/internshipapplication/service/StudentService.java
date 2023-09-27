@@ -104,42 +104,42 @@ public class StudentService {
 
 
     @Transactional
-    public void addLanguages(String id, List<String> languages) {
+    public void addLanguages(String id, List<Long> languages) {
         StudentProfile student = getStudentById(id);
         student.getLanguageIds().addAll(languages);
         studentRepository.save(student);
     }
 
     @Transactional
-    public void removeLanguages(String id, List<String> languages) {
+    public void removeLanguages(String id, List<Long> languages) {
         StudentProfile student = getStudentById(id);
         student.getLanguageIds().removeAll(languages);
         studentRepository.save(student);
     }
 
     @Transactional
-    public void addStacks(String id, List<String> stacks) {
+    public void addStacks(String id, List<Long> stacks) {
         StudentProfile student = getStudentById(id);
         student.getStackIds().addAll(stacks);
         studentRepository.save(student);
     }
 
     @Transactional
-    public void removeStacks(String id, List<String> stacks) {
+    public void removeStacks(String id, List<Long> stacks) {
         StudentProfile student = getStudentById(id);
         student.getStackIds().removeAll(stacks);
         studentRepository.save(student);
     }
 
     @Transactional
-    public void addTechnologies(String id, List<String> technologies) {
+    public void addTechnologies(String id, List<Long> technologies) {
         StudentProfile student = getStudentById(id);
         student.getTechnologyIds().addAll(technologies);
         studentRepository.save(student);
     }
 
     @Transactional
-    public void removeTechnologies(String id, List<String> technologies) {
+    public void removeTechnologies(String id, List<Long> technologies) {
         StudentProfile student = getStudentById(id);
         student.getTechnologyIds().removeAll(technologies);
         studentRepository.save(student);

@@ -43,37 +43,37 @@ public class StudentController {
     }
 
     @PostMapping("/{id}/languages")
-    public ResponseEntity<String> addLanguages(@PathVariable String id, @RequestBody List<String> languages) {
+    public ResponseEntity<String> addLanguages(@PathVariable String id, @RequestBody List<Long> languages) {
         studentService.addLanguages(id, languages);
         return ResponseEntity.ok("Languages added successfully");
     }
 
     @DeleteMapping("/{id}/languages")
-    public ResponseEntity<String> removeLanguages(@PathVariable String id, @RequestBody List<String> languages) {
+    public ResponseEntity<String> removeLanguages(@PathVariable String id, @RequestBody List<Long> languages) {
         studentService.removeLanguages(id, languages);
         return ResponseEntity.ok("Languages removed successfully");
     }
 
     @PostMapping("/{id}/stacks")
-    public ResponseEntity<String> addStacks(@PathVariable String id, @RequestBody List<String> stacks) {
+    public ResponseEntity<String> addStacks(@PathVariable String id, @RequestBody List<Long> stacks) {
         studentService.addStacks(id, stacks);
         return ResponseEntity.ok("Stacks added successfully");
     }
 
     @DeleteMapping("/{id}/stacks")
-    public ResponseEntity<String> removeStacks(@PathVariable String id, @RequestBody List<String> stacks) {
+    public ResponseEntity<String> removeStacks(@PathVariable String id, @RequestBody List<Long> stacks) {
         studentService.removeStacks(id, stacks);
         return ResponseEntity.ok("Stacks removed successfully");
     }
 
     @PostMapping("/{id}/technologies")
-    public ResponseEntity<String> addTechnologies(@PathVariable String id, @RequestBody List<String> technologies) {
+    public ResponseEntity<String> addTechnologies(@PathVariable String id, @RequestBody List<Long> technologies) {
         studentService.addTechnologies(id, technologies);
         return ResponseEntity.ok("Technologies added successfully");
     }
 
     @DeleteMapping("/{id}/technologies")
-    public ResponseEntity<String> removeTechnologies(@PathVariable String id, @RequestBody List<String> technologies) {
+    public ResponseEntity<String> removeTechnologies(@PathVariable String id, @RequestBody List<Long> technologies) {
         studentService.removeTechnologies(id, technologies);
         return ResponseEntity.ok("Technologies removed successfully");
     }

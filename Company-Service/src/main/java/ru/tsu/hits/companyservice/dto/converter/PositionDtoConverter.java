@@ -39,7 +39,7 @@ public class PositionDtoConverter {
         WebClient webClient = webClientBuilder.build();
 
         // Fetch name for Language by ID
-        List<String> singleLanguageId = Collections.singletonList(entity.getLanguageId());
+        List<Long> singleLanguageId = Collections.singletonList(entity.getLanguageId());
         List<String> languageNames = webClient.post()
                 .uri("http://localhost:8080/stack-service/api/languages/namesByIds")
                 .body(BodyInserters.fromValue(singleLanguageId))
@@ -50,7 +50,7 @@ public class PositionDtoConverter {
         dto.setLanguage(languageNames.get(0)); // Assuming there is only one
 
         // Similar for Stack
-        List<String> singleStackId = Collections.singletonList(entity.getStackId());
+        List<Long> singleStackId = Collections.singletonList(entity.getStackId());
         List<String> stackNames = webClient.post()
                 .uri("http://localhost:8080/stack-service/api/stacks/namesByIds")
                 .body(BodyInserters.fromValue(singleStackId))

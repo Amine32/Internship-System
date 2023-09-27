@@ -3,6 +3,7 @@ package ru.tsu.hits.internshipapplication.dto.converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.tsu.hits.internshipapplication.dto.ApplicationDto;
+import ru.tsu.hits.internshipapplication.dto.StackDto;
 import ru.tsu.hits.internshipapplication.dto.StudentDto;
 import ru.tsu.hits.internshipapplication.model.ApplicationEntity;
 import ru.tsu.hits.internshipapplication.model.StudentProfile;
@@ -26,9 +27,9 @@ public class StudentDtoConverter {
 
         dto.setApplications(applicationList);
 
-        List<String> languageNames = fetchLanguagesByIds(student.getLanguageIds());
-        List<String> positionNames = fetchPositionsByIds(student.getStackIds());
-        List<String> technologyNames = fetchTechnologiesByIds(student.getTechnologyIds());
+        List<StackDto> languageNames = fetchLanguagesByIds(student.getLanguageIds());
+        List<StackDto> positionNames = fetchPositionsByIds(student.getStackIds());
+        List<StackDto> technologyNames = fetchTechnologiesByIds(student.getTechnologyIds());
 
         // Set these to the dto
         dto.setLanguages(languageNames);
@@ -38,7 +39,7 @@ public class StudentDtoConverter {
         return dto;
     }
 
-    private static List<String> fetchLanguagesByIds(List<String> ids) {
+    private static List<StackDto> fetchLanguagesByIds(List<Long> ids) {
 
         if (ids == null || ids.isEmpty()) {
             return Collections.emptyList();
@@ -48,12 +49,12 @@ public class StudentDtoConverter {
                 .uri("http://localhost:8080/stack-service/api/languages/byIds")
                 .bodyValue(ids)
                 .retrieve()
-                .bodyToFlux(String.class)
+                .bodyToFlux(StackDto.class)
                 .collectList()
                 .block();
     }
 
-    private static List<String> fetchPositionsByIds(List<String> ids) {
+    private static List<StackDto> fetchPositionsByIds(List<Long> ids) {
 
         if (ids == null || ids.isEmpty()) {
             return Collections.emptyList();
@@ -63,12 +64,12 @@ public class StudentDtoConverter {
                 .uri("http://localhost:8080/stack-service/api/positions/byIds")
                 .bodyValue(ids)
                 .retrieve()
-                .bodyToFlux(String.class)
+                .bodyToFlux(StackDto.class)
                 .collectList()
                 .block();
     }
 
-    private static List<String> fetchTechnologiesByIds(List<String> ids) {
+    private static List<StackDto> fetchTechnologiesByIds(List<Long> ids) {
 
         if (ids == null || ids.isEmpty()) {
             return Collections.emptyList();
@@ -78,7 +79,7 @@ public class StudentDtoConverter {
                 .uri("http://localhost:8080/stack-service/api/technologies/byIds")
                 .bodyValue(ids)
                 .retrieve()
-                .bodyToFlux(String.class)
+                .bodyToFlux(StackDto.class)
                 .collectList()
                 .block();
     }

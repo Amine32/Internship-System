@@ -21,11 +21,11 @@ public class StudentProfile {
     private List<ApplicationEntity> applications;
 
     @ElementCollection
-    private List<String> languageIds;
+    private List<Long> languageIds;
 
     @ElementCollection
-    private List<String> StackIds;
+    private List<Long> StackIds;
 
     @ElementCollection
-    private List<String> technologyIds;
+    private List<Long> technologyIds;
 }

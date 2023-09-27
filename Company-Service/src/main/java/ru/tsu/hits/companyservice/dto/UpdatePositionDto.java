@@ -10,8 +10,8 @@ public class UpdatePositionDto {
     private String description;
     private int numberOfPlaces;
     private String salaryRange;
-    private String languageId;
-    private String stackId;
-    private List<String> technologiesIds;
+    private Long languageId;
+    private Long stackId;
+    private List<Long> technologiesIds;
 }
 
