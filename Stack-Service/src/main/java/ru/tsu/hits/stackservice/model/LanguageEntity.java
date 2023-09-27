@@ -3,6 +3,7 @@ package ru.tsu.hits.stackservice.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,8 +17,8 @@ public class LanguageEntity {
     private String name;
 
     @ManyToMany(mappedBy = "relatedLanguages")
-    private List<StackEntity> relatedStacks;
+    private List<StackEntity> relatedStacks = new ArrayList<>();
 
     @ManyToMany(mappedBy = "relatedLanguages")
-    private List<TechnologyEntity> relatedTechnologies;
+    private List<TechnologyEntity> relatedTechnologies = new ArrayList<>();
 }
