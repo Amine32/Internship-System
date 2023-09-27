@@ -31,10 +31,6 @@ public class PositionDtoConverter {
             mapper.map(PositionEntity::getStatus, PositionDto::setStatus); // Enum mapping
             mapper.map(src -> src.getCompany().getName(), PositionDto::setCompanyName); // Nested property mapping
         });
-
-        // New TypeMap to handle CreatePositionDto -> PositionEntity, skipping the 'id' field
-        modelMapper.createTypeMap(CreatePositionDto.class, PositionEntity.class)
-                .addMappings(mapper -> mapper.skip(PositionEntity::setId));
     }
 
     public PositionDto convertToDto(PositionEntity entity) {
@@ -77,7 +73,16 @@ public class PositionDtoConverter {
     }
 
     public PositionEntity convertToEntity(CreatePositionDto dto) {
-        PositionEntity entity = modelMapper.map(dto, PositionEntity.class);
+        PositionEntity entity = new PositionEntity();
+
+        // Manually map each field from CreatePositionDto to PositionEntity
+        entity.setTitle(dto.getTitle());
+        entity.setDescription(dto.getDescription());
+        entity.setNumberOfPlaces(dto.getNumberOfPlaces());
+        entity.setSalaryRange(dto.getSalaryRange());
+        entity.setLanguageId(dto.getLanguageId());
+        entity.setStackId(dto.getStackId());
+        entity.setTechnologiesIds(dto.getTechnologiesIds());
 
         // Initialize numberOfApplications to 0
         entity.setNumberOfApplications(0);
