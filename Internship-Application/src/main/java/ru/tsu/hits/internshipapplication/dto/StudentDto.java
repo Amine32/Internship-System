@@ -13,9 +13,9 @@ public class StudentDto {
 
     private List<ApplicationDto> applications;
 
-    private List<String> languages;
+    private List<String> stacks;
 
-    private List<String> positions;
+    private List<String> languages;
 
     private List<String> technologies;
 }

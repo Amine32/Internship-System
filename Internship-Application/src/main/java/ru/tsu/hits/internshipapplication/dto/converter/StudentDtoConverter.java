@@ -27,12 +27,12 @@ public class StudentDtoConverter {
         dto.setApplications(applicationList);
 
         List<String> languageNames = fetchLanguagesByIds(student.getLanguageIds());
-        List<String> positionNames = fetchPositionsByIds(student.getPositionIds());
+        List<String> positionNames = fetchPositionsByIds(student.getStackIds());
         List<String> technologyNames = fetchTechnologiesByIds(student.getTechnologyIds());
 
         // Set these to the dto
         dto.setLanguages(languageNames);
-        dto.setPositions(positionNames);
+        dto.setStacks(positionNames);
         dto.setTechnologies(technologyNames);
 
         return dto;

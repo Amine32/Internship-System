@@ -17,6 +17,7 @@ import ru.tsu.hits.internshipapplication.repository.StudentRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -99,5 +100,48 @@ public class StudentService {
     @Transactional
     public void handleUserDeletedEvent(String id) {
         studentRepository.deleteById(id);
+    }
+
+
+    @Transactional
+    public void addLanguages(String id, List<String> languages) {
+        StudentProfile student = getStudentById(id);
+        student.getLanguageIds().addAll(languages);
+        studentRepository.save(student);
+    }
+
+    @Transactional
+    public void removeLanguages(String id, List<String> languages) {
+        StudentProfile student = getStudentById(id);
+        student.getLanguageIds().removeAll(languages);
+        studentRepository.save(student);
+    }
+
+    @Transactional
+    public void addStacks(String id, List<String> stacks) {
+        StudentProfile student = getStudentById(id);
+        student.getStackIds().addAll(stacks);
+        studentRepository.save(student);
+    }
+
+    @Transactional
+    public void removeStacks(String id, List<String> stacks) {
+        StudentProfile student = getStudentById(id);
+        student.getStackIds().removeAll(stacks);
+        studentRepository.save(student);
+    }
+
+    @Transactional
+    public void addTechnologies(String id, List<String> technologies) {
+        StudentProfile student = getStudentById(id);
+        student.getTechnologyIds().addAll(technologies);
+        studentRepository.save(student);
+    }
+
+    @Transactional
+    public void removeTechnologies(String id, List<String> technologies) {
+        StudentProfile student = getStudentById(id);
+        student.getTechnologyIds().removeAll(technologies);
+        studentRepository.save(student);
     }
 }

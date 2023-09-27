@@ -24,7 +24,7 @@ public class StudentProfile {
     private List<String> languageIds;
 
     @ElementCollection
-    private List<String> positionIds;
+    private List<String> StackIds;
 
     @ElementCollection
     private List<String> technologyIds;
