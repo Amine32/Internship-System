@@ -85,11 +85,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean isExcluded(String path, String method) {
-        // Exclude only POST requests to "/api/students/"
-        if (path.startsWith("/api/students/") && "POST".equalsIgnoreCase(method)) {
-            return true;
-        }
-
         // Exclude other paths for all methods
         for (String excludedPath : EXCLUDED_PATHS) {
             if (path.startsWith(excludedPath)) {
