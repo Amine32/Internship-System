@@ -39,35 +39,44 @@ public class PositionDtoConverter {
         WebClient webClient = webClientBuilder.build();
 
         // Fetch name for Language by ID
-        List<Long> singleLanguageId = Collections.singletonList(entity.getLanguageId());
-        List<String> languageNames = webClient.post()
-                .uri("http://localhost:8080/stack-service/api/languages/namesByIds")
-                .body(BodyInserters.fromValue(singleLanguageId))
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
-                .block();
-        assert languageNames != null;
-        dto.setLanguage(languageNames.get(0)); // Assuming there is only one
+        if (entity.getLanguageId() != null) {
+            List<Long> singleLanguageId = Collections.singletonList(entity.getLanguageId());
+            List<String> languageNames = webClient.post()
+                    .uri("http://localhost:8080/stack-service/api/languages/namesByIds")
+                    .body(BodyInserters.fromValue(singleLanguageId))
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<List<String>>() {
+                    })
+                    .block();
+            assert languageNames != null;
+            dto.setLanguage(languageNames.get(0)); // Assuming there is only one
+        }
 
         // Similar for Stack
-        List<Long> singleStackId = Collections.singletonList(entity.getStackId());
-        List<String> stackNames = webClient.post()
-                .uri("http://localhost:8080/stack-service/api/stacks/namesByIds")
-                .body(BodyInserters.fromValue(singleStackId))
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
-                .block();
-        assert stackNames != null;
-        dto.setStack(stackNames.get(0));
+        if(entity.getStackId() != null) {
+            List<Long> singleStackId = Collections.singletonList(entity.getStackId());
+            List<String> stackNames = webClient.post()
+                    .uri("http://localhost:8080/stack-service/api/stacks/namesByIds")
+                    .body(BodyInserters.fromValue(singleStackId))
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<List<String>>() {
+                    })
+                    .block();
+            assert stackNames != null;
+            dto.setStack(stackNames.get(0));
+        }
 
         // Fetch names for Technologies by IDs
-        List<String> technologyNames = webClient.post()
-                .uri("http://localhost:8080/stack-service/api/technologies/namesByIds")
-                .body(BodyInserters.fromValue(entity.getTechnologiesIds()))
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
-                .block();
-        dto.setTechnologies(technologyNames);
+        if (entity.getTechnologiesIds() != null && !entity.getTechnologiesIds().isEmpty()) {
+            List<String> technologyNames = webClient.post()
+                    .uri("http://localhost:8080/stack-service/api/technologies/namesByIds")
+                    .body(BodyInserters.fromValue(entity.getTechnologiesIds()))
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<List<String>>() {
+                    })
+                    .block();
+            dto.setTechnologies(technologyNames);
+        }
 
         return dto;
     }
