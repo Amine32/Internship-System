@@ -61,7 +61,7 @@ public class StudentDtoConverter {
         }
 
         return webClient.post()
-                .uri("http://localhost:8080/stack-service/api/positions/byIds")
+                .uri("http://localhost:8080/stack-service/api/stacks/byIds")
                 .bodyValue(ids)
                 .retrieve()
                 .bodyToFlux(StackDto.class)
