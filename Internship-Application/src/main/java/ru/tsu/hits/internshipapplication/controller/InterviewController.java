@@ -1,5 +1,6 @@
 package ru.tsu.hits.internshipapplication.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.internshipapplication.dto.CreateUpdateInterviewDto;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/interviews")
 @RequiredArgsConstructor
+@Api("Interview API")
 public class InterviewController {
 
     private final InterviewService interviewService;

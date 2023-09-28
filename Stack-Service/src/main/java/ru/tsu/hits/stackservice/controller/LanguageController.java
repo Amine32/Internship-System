@@ -1,6 +1,7 @@
 package ru.tsu.hits.stackservice.controller;
 
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.stackservice.dto.CreateUpdateLanguageDto;
@@ -11,6 +12,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/languages")
+@Api("Language API")
 public class LanguageController {
 
     private final LanguageService languageService;

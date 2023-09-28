@@ -1,5 +1,6 @@
 package ru.tsu.hits.internshipapplication.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.internshipapplication.dto.ApplicationDto;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/applications")
 @RequiredArgsConstructor
+@Api("Application API")
 public class ApplicationController {
 
     private final ApplicationService applicationService;

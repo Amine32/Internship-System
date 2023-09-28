@@ -1,5 +1,6 @@
 package ru.tsu.hits.userservice.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,6 +16,7 @@ import ru.tsu.hits.userservice.service.CustomUserDetailsService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/authenticate")
+@Api("Authentication API")
 public class JwtAuthenticationController {
 
     private final AuthenticationManager authenticationManager;

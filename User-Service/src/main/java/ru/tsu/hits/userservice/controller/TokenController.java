@@ -1,5 +1,6 @@
 package ru.tsu.hits.userservice.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import ru.tsu.hits.userservice.security.JwtUtil;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@Api("Token Validation API")
 public class TokenController {
 
     private final JwtUtil jwtUtil;

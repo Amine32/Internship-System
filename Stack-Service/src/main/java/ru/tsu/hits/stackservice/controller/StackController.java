@@ -1,5 +1,6 @@
 package ru.tsu.hits.stackservice.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.stackservice.dto.CreateUpdateStackDto;
@@ -11,6 +12,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/stacks")
+@Api("Stack API")
 public class StackController {
 
     private final StackService stackService;

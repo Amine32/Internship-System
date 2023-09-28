@@ -1,5 +1,6 @@
 package ru.tsu.hits.userservice.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.userservice.dto.CreateUpdateGroupDto;
@@ -11,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/groups")
 @RequiredArgsConstructor
+@Api("Group API")
 public class GroupController {
 
     private final GroupService groupService;
