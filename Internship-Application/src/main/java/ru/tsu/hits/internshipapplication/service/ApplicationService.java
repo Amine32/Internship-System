@@ -46,13 +46,13 @@ public class ApplicationService {
         StudentProfile student = studentService.getStudentByToken(request);
         application.setStudent(student);
 
+        application = applicationRepository.save(application);
+
         if(student.getApplications() == null) {
             student.setApplications(new ArrayList<>());
         }
         student.getApplications().add(application);
         studentService.updateStudent(student);
-
-        application = applicationRepository.save(application);
 
         return ApplicationDtoConverter.convertEntityToDto(application, request);
     }

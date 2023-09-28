@@ -17,7 +17,7 @@ public class StudentProfile {
     @Lob
     private byte[] resume;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student")
     private List<ApplicationEntity> applications;
 
     @ElementCollection

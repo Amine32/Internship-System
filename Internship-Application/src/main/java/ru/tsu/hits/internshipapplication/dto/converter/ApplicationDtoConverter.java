@@ -62,14 +62,14 @@ public class ApplicationDtoConverter {
         WebClient webClient = webClientBuilder.build();
         PositionInfoDto positionDto = webClient
                 .get()
-                .uri("http://localhost:8080/company-service/api/intershipPosition/info/" + application.getPositionId())
+                .uri("http://localhost:8080/company-service/api/positions/" + application.getPositionId())
                 .headers(httpHeaders -> httpHeaders.addAll(headers))
                 .retrieve()
                 .bodyToMono(PositionInfoDto.class)
                 .block();
 
         if (positionDto != null) {
-            dto.setPosition(positionDto.getInternshipPositionName());
+            dto.setPosition(positionDto.getTitle());
             dto.setCompanyName(positionDto.getCompanyName());
         }
 
