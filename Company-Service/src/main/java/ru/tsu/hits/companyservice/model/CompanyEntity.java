@@ -1,13 +1,18 @@
 package ru.tsu.hits.companyservice.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
 @Table(name = "companies")
 public class CompanyEntity {
 

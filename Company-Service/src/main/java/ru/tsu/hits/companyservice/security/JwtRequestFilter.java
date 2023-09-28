@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,7 +21,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,7 +31,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final WebClient.Builder webClientBuilder;
 
-    private static final List<String> EXCLUDED_PATHS = Arrays.asList("/swagger-ui", "/v3/api-docs", "/swagger-ui.html", "/webjars", "/v2", "/swagger-resources");
+    private final JwtProperties jwtProperties;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -58,7 +58,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                 if (Boolean.TRUE.equals(isValid)) {
 
-                    Jws<Claims> claims = Jwts.parser().setSigningKey("secret").parseClaimsJws(jwt);
+                    Jws<Claims> claims = Jwts.parser().setSigningKey(jwtProperties.getSecret()).parseClaimsJws(jwt);
                     String username = claims.getBody().getSubject();
                     List<Map<String, String>> authorityMaps = (List<Map<String, String>>) claims.getBody().get("authorities");
 
@@ -86,7 +86,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private boolean isExcluded(String path, String method) {
         // Exclude other paths for all methods
-        for (String excludedPath : EXCLUDED_PATHS) {
+        for (String excludedPath : jwtProperties.getExcludedPaths()) {
             if (path.startsWith(excludedPath)) {
                 return true;
             }

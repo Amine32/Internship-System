@@ -24,3 +24,13 @@ spring:
 
 server:
   port: 8083
+
+jwt:
+  secret: "secret"
+  excludedPaths:
+    - /swagger-ui
+    - /v3/api-docs
+    - /swagger-ui.html
+    - /webjars
+    - /v2
+    - /swagger-resources

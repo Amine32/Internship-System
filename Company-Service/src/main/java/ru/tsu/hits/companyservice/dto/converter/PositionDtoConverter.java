@@ -7,7 +7,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import ru.tsu.hits.companyservice.dto.CreatePositionDto;
+import ru.tsu.hits.companyservice.dto.CreateUpdatePositionDto;
 import ru.tsu.hits.companyservice.dto.PositionDto;
 import ru.tsu.hits.companyservice.model.CompanyEntity;
 import ru.tsu.hits.companyservice.model.PositionEntity;
@@ -81,10 +81,23 @@ public class PositionDtoConverter {
         return dto;
     }
 
-    public PositionEntity convertToEntity(CreatePositionDto dto) {
+    public PositionEntity convertToEntity(CreateUpdatePositionDto dto) {
         PositionEntity entity = new PositionEntity();
 
-        // Manually map each field from CreatePositionDto to PositionEntity
+        // Manually map each field from CreateUpdatePositionDto to PositionEntity
+        entity = updateEntityFromDto(entity, dto);
+
+        // Initialize numberOfApplications to 0
+        entity.setNumberOfApplications(0);
+
+        // Fetch CompanyEntity based on dto.getCompanyId() and set it
+        CompanyEntity companyEntity = companyService.fetchCompanyEntity(dto.getCompanyId());
+        entity.setCompany(companyEntity);
+
+        return entity;
+    }
+
+    public PositionEntity updateEntityFromDto(PositionEntity entity, CreateUpdatePositionDto dto) {
         entity.setTitle(dto.getTitle());
         entity.setDescription(dto.getDescription());
         entity.setNumberOfPlaces(dto.getNumberOfPlaces());
@@ -92,13 +105,6 @@ public class PositionDtoConverter {
         entity.setLanguageId(dto.getLanguageId());
         entity.setStackId(dto.getStackId());
         entity.setTechnologiesIds(dto.getTechnologiesIds());
-
-        // Initialize numberOfApplications to 0
-        entity.setNumberOfApplications(0);
-
-        // Fetch CompanyEntity based on dto.getCompanyId() and set it
-        CompanyEntity companyEntity = companyService.getCompanyEntityById(dto.getCompanyId());
-        entity.setCompany(companyEntity);
 
         return entity;
     }
