@@ -29,9 +29,9 @@ public class PositionController {
 
     @PostMapping
     @ApiOperation("Create a new position")
-    public ResponseEntity<PositionDto> createPosition(@Valid @RequestBody CreateUpdatePositionDto dto) {
+    public ResponseEntity<PositionDto> createPosition(@Valid @RequestBody CreateUpdatePositionDto dto, HttpServletRequest request) {
         logger.info("Creating new position with title {}", dto.getTitle());
-        PositionDto newPosition = positionService.createPosition(dto);
+        PositionDto newPosition = positionService.createPosition(dto, request);
         return new ResponseEntity<>(newPosition, HttpStatus.CREATED);
     }
 
@@ -45,17 +45,17 @@ public class PositionController {
 
     @GetMapping
     @ApiOperation("Get all positions")
-    public ResponseEntity<List<PositionDto>> getAllPositions() {
+    public ResponseEntity<List<PositionDto>> getAllPositions(HttpServletRequest request) {
         logger.info("Fetching all positions");
-        List<PositionDto> positions = positionService.getAllPositions();
+        List<PositionDto> positions = positionService.getAllPositions(request);
         return new ResponseEntity<>(positions, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     @ApiOperation("Update a position by ID")
-    public ResponseEntity<PositionDto> updatePosition(@PathVariable String id, @Valid @RequestBody CreateUpdatePositionDto updatePositionDTO) {
+    public ResponseEntity<PositionDto> updatePosition(@PathVariable String id, @Valid @RequestBody CreateUpdatePositionDto updatePositionDTO, HttpServletRequest request) {
         logger.info("Updating position with ID {}", id);
-        PositionDto updatedPosition = positionService.updatePosition(id, updatePositionDTO);
+        PositionDto updatedPosition = positionService.updatePosition(id, updatePositionDTO, request);
         return new ResponseEntity<>(updatedPosition, HttpStatus.OK);
     }
 

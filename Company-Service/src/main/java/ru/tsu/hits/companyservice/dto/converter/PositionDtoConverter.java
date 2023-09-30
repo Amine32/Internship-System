@@ -11,8 +11,10 @@ import ru.tsu.hits.companyservice.dto.CreateUpdatePositionDto;
 import ru.tsu.hits.companyservice.dto.PositionDto;
 import ru.tsu.hits.companyservice.model.CompanyEntity;
 import ru.tsu.hits.companyservice.model.PositionEntity;
-import ru.tsu.hits.companyservice.service.CompanyService;
+import ru.tsu.hits.companyservice.service.ApplicationCountService;
+import ru.tsu.hits.companyservice.service.SharedService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,7 +24,8 @@ public class PositionDtoConverter {
 
     private static final ModelMapper modelMapper = new ModelMapper();
     private final WebClient.Builder webClientBuilder;
-    private final CompanyService companyService;
+    private final SharedService sharedService;
+    private final ApplicationCountService applicationCountService;
 
     static {
         // Create a TypeMap for custom mapping
@@ -33,7 +36,7 @@ public class PositionDtoConverter {
         });
     }
 
-    public PositionDto convertToDto(PositionEntity entity) {
+    public PositionDto convertToDto(PositionEntity entity, HttpServletRequest request) {
         PositionDto dto = modelMapper.map(entity, PositionDto.class);
 
         WebClient webClient = webClientBuilder.build();
@@ -78,6 +81,10 @@ public class PositionDtoConverter {
             dto.setTechnologies(technologyNames);
         }
 
+        //Fetch numberOfApplications
+        int numberOfApplications = applicationCountService.fetchApplicationCountFromMicroservice(entity.getId(), request);
+        dto.setNumberOfApplications(numberOfApplications);
+
         return dto;
     }
 
@@ -87,11 +94,8 @@ public class PositionDtoConverter {
         // Manually map each field from CreateUpdatePositionDto to PositionEntity
         entity = updateEntityFromDto(entity, dto);
 
-        // Initialize numberOfApplications to 0
-        entity.setNumberOfApplications(0);
-
         // Fetch CompanyEntity based on dto.getCompanyId() and set it
-        CompanyEntity companyEntity = companyService.fetchCompanyEntity(dto.getCompanyId());
+        CompanyEntity companyEntity = sharedService.fetchCompanyEntity(dto.getCompanyId());
         entity.setCompany(companyEntity);
 
         return entity;

@@ -21,33 +21,31 @@ public class PositionService {
 
     private final PositionRepository positionRepository;
     private final PositionDtoConverter dtoConverter;
-    private final ApplicationCountService applicationCountService;
 
-    public PositionDto createPosition(CreateUpdatePositionDto dto) {
+    public PositionDto createPosition(CreateUpdatePositionDto dto, HttpServletRequest request) {
         log.info("Creating new position");
-        return saveAndConvertToDto(dtoConverter.convertToEntity(dto));
+        return saveAndConvertToDto(dtoConverter.convertToEntity(dto), request);
     }
 
     public PositionDto getPositionById(String id, HttpServletRequest request) {
         log.info("Fetching position with id: {}", id);
         PositionEntity position = fetchPositionEntity(id);
-        updateApplicationCount(position, request);
-        return dtoConverter.convertToDto(position);
+        return dtoConverter.convertToDto(position, request);
     }
 
-    public List<PositionDto> getAllPositions() {
+    public List<PositionDto> getAllPositions(HttpServletRequest request) {
         log.info("Fetching all positions");
         return positionRepository.findAll()
                 .stream()
-                .map(dtoConverter::convertToDto)
+                .map(entity -> dtoConverter.convertToDto(entity, request))
                 .collect(Collectors.toList());
     }
 
-    public PositionDto updatePosition(String id, CreateUpdatePositionDto dto) {
+    public PositionDto updatePosition(String id, CreateUpdatePositionDto dto, HttpServletRequest request) {
         log.info("Updating position with id: {}", id);
         PositionEntity existingPosition = fetchPositionEntity(id);
         existingPosition = updatePositionEntity(existingPosition, dto);
-        return saveAndConvertToDto(existingPosition);
+        return saveAndConvertToDto(existingPosition, request);
     }
 
     public void deletePosition(String id) {
@@ -67,8 +65,8 @@ public class PositionService {
                 .orElseThrow(() -> new PositionNotFoundException("Position not found"));
     }
 
-    private PositionDto saveAndConvertToDto(PositionEntity entity) {
-        return dtoConverter.convertToDto(saveEntity(entity));
+    private PositionDto saveAndConvertToDto(PositionEntity entity, HttpServletRequest request) {
+        return dtoConverter.convertToDto(saveEntity(entity), request);
     }
 
     private PositionEntity saveEntity(PositionEntity entity) {
@@ -77,12 +75,6 @@ public class PositionService {
 
     private PositionEntity updatePositionEntity(PositionEntity existingPosition, CreateUpdatePositionDto dto) {
         return dtoConverter.updateEntityFromDto(existingPosition, dto);
-    }
-
-    private void updateApplicationCount(PositionEntity position, HttpServletRequest request) {
-        int numberOfApplications = applicationCountService.fetchApplicationCountFromMicroservice(position.getId(), request);
-        position.setNumberOfApplications(numberOfApplications);
-        positionRepository.save(position);
     }
 }
 

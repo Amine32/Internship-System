@@ -43,7 +43,7 @@ public class ApplicationController {
         applicationService.deleteApplicationById(applicationId);
     }
 
-    @GetMapping("positions/{positionId}/count")
+    @GetMapping("position/{positionId}/count")
     public Integer getCountByPositionId(@PathVariable String positionId) {
         return applicationService.getCountByPositionId(positionId);
     }

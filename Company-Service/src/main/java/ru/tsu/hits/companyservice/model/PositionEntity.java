@@ -27,8 +27,6 @@ public class PositionEntity {
     private String salaryRange;
     private PositionStatus status;
 
-    private int numberOfApplications;
-
     private Long stackId;
     private Long languageId;
     @ElementCollection

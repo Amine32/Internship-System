@@ -10,6 +10,7 @@ import ru.tsu.hits.companyservice.exception.CompanyNotFoundException;
 import ru.tsu.hits.companyservice.model.CompanyEntity;
 import ru.tsu.hits.companyservice.repository.CompanyRepository;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,44 +21,40 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final CompanyDtoConverter dtoConverter;
+    private final SharedService sharedService;
 
-    public CompanyDto createCompany(CreateUpdateCompanyDto dto) {
+    public CompanyDto createCompany(CreateUpdateCompanyDto dto, HttpServletRequest request) {
         log.info("Creating new company");
-        return saveAndConvertToDto(dtoConverter.convertToEntity(dto));
+        return saveAndConvertToDto(dtoConverter.convertToEntity(dto), request);
     }
 
-    public CompanyDto getCompanyById(String id) {
+    public CompanyDto getCompanyById(String id, HttpServletRequest request) {
         log.info("Fetching company with id: {}", id);
-        return dtoConverter.convertToDto(fetchCompanyEntity(id));
+        return dtoConverter.convertToDto(sharedService.fetchCompanyEntity(id), request);
     }
 
-    public List<CompanyDto> getAllCompanies() {
+    public List<CompanyDto> getAllCompanies(HttpServletRequest request) {
         log.info("Fetching all companies");
         return companyRepository.findAll()
                 .stream()
-                .map(dtoConverter::convertToDto)
+                .map(entity -> dtoConverter.convertToDto(entity, request))
                 .collect(Collectors.toList());
     }
 
-    public CompanyDto updateCompany(String id, CreateUpdateCompanyDto dto) {
+    public CompanyDto updateCompany(String id, CreateUpdateCompanyDto dto, HttpServletRequest request) {
         log.info("Updating company with id: {}", id);
-        CompanyEntity existingCompany = fetchCompanyEntity(id);
+        CompanyEntity existingCompany = sharedService.fetchCompanyEntity(id);
         updateCompanyEntity(existingCompany, dto);
-        return saveAndConvertToDto(existingCompany);
+        return saveAndConvertToDto(existingCompany, request);
     }
 
     public void deleteCompany(String id) {
         log.info("Deleting company with id: {}", id);
-        companyRepository.delete(fetchCompanyEntity(id));
+        companyRepository.delete(sharedService.fetchCompanyEntity(id));
     }
 
-   public CompanyEntity fetchCompanyEntity(String id) {
-        return companyRepository.findById(id)
-                .orElseThrow(() -> new CompanyNotFoundException("Company not found"));
-    }
-
-    private CompanyDto saveAndConvertToDto(CompanyEntity entity) {
-        return dtoConverter.convertToDto(companyRepository.save(entity));
+    private CompanyDto saveAndConvertToDto(CompanyEntity entity, HttpServletRequest request) {
+        return dtoConverter.convertToDto(companyRepository.save(entity), request);
     }
 
     private void updateCompanyEntity(CompanyEntity existingCompany, CreateUpdateCompanyDto dto) {
