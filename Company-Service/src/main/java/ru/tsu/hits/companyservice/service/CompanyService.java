@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import ru.tsu.hits.companyservice.dto.CompanyDto;
 import ru.tsu.hits.companyservice.dto.CreateUpdateCompanyDto;
 import ru.tsu.hits.companyservice.dto.converter.CompanyDtoConverter;
-import ru.tsu.hits.companyservice.exception.CompanyNotFoundException;
 import ru.tsu.hits.companyservice.model.CompanyEntity;
 import ru.tsu.hits.companyservice.repository.CompanyRepository;
 
