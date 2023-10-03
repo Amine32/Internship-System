@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/technologies")
-@Api("Technology API")
+@Api(tags = "Technology API")
 public class TechnologyController {
 
     private final TechnologyService technologyService;

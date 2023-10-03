@@ -54,7 +54,8 @@ public class StudentService {
 
 
         assert userIdDto != null;
-        return studentRepository.getById(userIdDto.getUserId());
+        return studentRepository.findById(userIdDto.getUserId())
+                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
     }
 
     @Transactional

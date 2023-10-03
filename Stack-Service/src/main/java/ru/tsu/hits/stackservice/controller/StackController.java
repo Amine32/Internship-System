@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/stacks")
-@Api("Stack API")
+@Api(tags = "Stack API")
 public class StackController {
 
     private final StackService stackService;

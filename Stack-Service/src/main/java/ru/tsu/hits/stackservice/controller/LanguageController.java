@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/languages")
-@Api("Language API")
+@Api(tags = "Language API")
 public class LanguageController {
 
     private final LanguageService languageService;

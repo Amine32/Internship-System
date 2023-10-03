@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/applications")
 @RequiredArgsConstructor
-@Api("Application API")
+@Api(tags = "Application API")
 public class ApplicationController {
 
     private final ApplicationService applicationService;

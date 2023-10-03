@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/interviews")
 @RequiredArgsConstructor
-@Api("Interview API")
+@Api(tags = "Interview API")
 public class InterviewController {
 
     private final InterviewService interviewService;

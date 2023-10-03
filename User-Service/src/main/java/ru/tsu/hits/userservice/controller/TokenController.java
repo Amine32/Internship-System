@@ -13,7 +13,7 @@ import ru.tsu.hits.userservice.security.JwtUtil;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-@Api("Token Validation API")
+@Api(tags = "Token Validation API")
 public class TokenController {
 
     private final JwtUtil jwtUtil;
