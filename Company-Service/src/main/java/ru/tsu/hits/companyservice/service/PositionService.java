@@ -11,6 +11,7 @@ import ru.tsu.hits.companyservice.model.PositionEntity;
 import ru.tsu.hits.companyservice.repository.PositionRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,19 @@ public class PositionService {
                 .stream()
                 .map(entity -> dtoConverter.convertToDto(entity, request))
                 .collect(Collectors.toList());
+    }
+
+    public List<PositionDto> getPositionsByCompanyId(String companyId, HttpServletRequest request) {
+        List<PositionEntity> positionEntities = positionRepository.findByCompanyId(companyId);
+
+        //convert PositionEntity to PositionDto
+        List<PositionDto> positionDtos = new ArrayList<>();
+        for(PositionEntity positionEntity : positionEntities) {
+            PositionDto positionDto = dtoConverter.convertToDto(positionEntity, request);
+            positionDtos.add(positionDto);
+        }
+
+        return positionDtos;
     }
 
     public PositionDto updatePosition(String id, CreateUpdatePositionDto dto, HttpServletRequest request) {

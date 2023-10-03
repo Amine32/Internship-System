@@ -19,14 +19,24 @@ public class StudentController {
 
     private final StudentService studentService;
 
-    @GetMapping("/{id}")
-    public StudentDto getStudentById(@PathVariable String id, HttpServletRequest request) {
-        return studentService.getStudentDtoById(id, request);
-    }
-
     @PostMapping("/{id}")
     public void createStudentProfile(@PathVariable String id) {
         studentService.handleStudentUserCreatedEvent(id);
+    }
+
+    @GetMapping()
+    public List<StudentDto> getAllStudents(HttpServletRequest request) {
+        return studentService.getAllStudents(request);
+    }
+
+    @GetMapping("/byCompany/{companyId}")
+    public List<StudentDto> getStudentsByCompanyId(@PathVariable String companyId, HttpServletRequest request) {
+        return studentService.getStudentsByCompanyId(companyId, request);
+    }
+
+    @GetMapping("/{id}")
+    public StudentDto getStudentById(@PathVariable String id, HttpServletRequest request) {
+        return studentService.getStudentDtoById(id, request);
     }
 
     @DeleteMapping("/{id}")

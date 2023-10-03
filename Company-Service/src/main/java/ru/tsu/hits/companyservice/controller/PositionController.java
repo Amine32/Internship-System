@@ -51,6 +51,14 @@ public class PositionController {
         return new ResponseEntity<>(positions, HttpStatus.OK);
     }
 
+    @GetMapping("/byCompany/{companyId}")
+    @ApiOperation("Get positions by company ID")
+    public ResponseEntity<List<PositionDto>> getPositionsByCompanyId(@PathVariable String companyId, HttpServletRequest request) {
+        logger.info("Fetching positions with company ID {}", companyId);
+        List<PositionDto> positions = positionService.getPositionsByCompanyId(companyId, request);
+        return new ResponseEntity<>(positions, HttpStatus.OK);
+    }
+
     @PutMapping("/{id}")
     @ApiOperation("Update a position by ID")
     public ResponseEntity<PositionDto> updatePosition(@PathVariable String id, @Valid @RequestBody CreateUpdatePositionDto updatePositionDTO, HttpServletRequest request) {

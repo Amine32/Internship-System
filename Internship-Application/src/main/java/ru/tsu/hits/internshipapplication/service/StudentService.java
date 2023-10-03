@@ -17,7 +17,9 @@ import ru.tsu.hits.internshipapplication.repository.StudentRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +36,35 @@ public class StudentService {
     private StudentProfile getStudentById(String id) {
         return studentRepository.findById(id)
                 .orElseThrow(() -> new StudentNotFoundException("Student with id " + id + "not found"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<StudentDto> getAllStudents(HttpServletRequest request) {
+        return studentRepository.findAll()
+                .stream()
+                .map(entity -> StudentDtoConverter.convertEntityToDto(entity, request))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<StudentDto> getStudentsByCompanyId(String companyId, HttpServletRequest request) {
+        List<String> positionIds = webClientBuilder.build()
+                .get()
+                .uri("http://localhost:8080/company-service/api/positions/byCompany/" + companyId)
+                .retrieve()
+                .bodyToFlux(String.class)
+                .collectList()
+                .block();
+
+        if (positionIds == null || positionIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<StudentProfile> students = studentRepository.findByApplications_PositionIdIn(positionIds);
+
+        return students.stream()
+                .map(student -> StudentDtoConverter.convertEntityToDto(student, request))
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
