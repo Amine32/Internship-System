@@ -9,6 +9,7 @@ import ru.tsu.hits.companyservice.dto.PositionDto;
 import ru.tsu.hits.companyservice.model.CompanyEntity;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,12 +22,18 @@ public class CompanyDtoConverter {
 
     public CompanyDto convertToDto(CompanyEntity entity, HttpServletRequest request) {
         CompanyDto dto = modelMapper.map(entity, CompanyDto.class);
-        // Convert each PositionEntity to PositionDto
-        List<PositionDto> positionDtos = entity.getPositions().stream()
-                .map(positionEntity -> positionDtoConverter.convertToDto(positionEntity, request))
-                .collect(Collectors.toList());
 
-        dto.setPositions(positionDtos);
+        if (entity.getPositions() != null) {
+            // Convert each PositionEntity to PositionDto
+            List<PositionDto> positionDtos = entity.getPositions().stream()
+                    .map(positionEntity -> positionDtoConverter.convertToDto(positionEntity, request))
+                    .collect(Collectors.toList());
+
+            dto.setPositions(positionDtos);
+        } else {
+            dto.setPositions(Collections.emptyList());
+        }
+
         return dto;
     }
 

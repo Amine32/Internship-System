@@ -22,7 +22,7 @@ public class CreateUpdateCompanyDto {
     @URL(message = "Invalid URL format")
     private String websiteURL;
 
-    @Pattern(regexp = "([a-zA-Z0-9\\s_\\\\.\\-:])+(.png|.jpg|.gif)$", message = "Invalid logo URL")
+    @Pattern(regexp = "([a-zA-Z0-9\\s_\\\\.\\-:/])+(.png|.jpg|.gif)$", message = "Invalid logo URL")
     private String logoURL;
 }
 
