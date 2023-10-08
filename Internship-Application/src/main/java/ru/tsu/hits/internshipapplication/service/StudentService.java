@@ -48,9 +48,14 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public List<StudentDto> getStudentsByCompanyId(String companyId, HttpServletRequest request) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", request.getHeader("Authorization"));
+
         List<String> positionIds = webClientBuilder.build()
                 .get()
                 .uri("http://localhost:8080/company-service/api/positions/byCompany/" + companyId)
+                .headers(httpHeaders -> httpHeaders.addAll(headers))
                 .retrieve()
                 .bodyToFlux(String.class)
                 .collectList()
