@@ -42,17 +42,16 @@ public class PositionService {
                 .collect(Collectors.toList());
     }
 
-    public List<PositionDto> getPositionsByCompanyId(String companyId, HttpServletRequest request) {
+    public List<String> getPositionsByCompanyId(String companyId) {
         List<PositionEntity> positionEntities = positionRepository.findByCompanyId(companyId);
 
         //convert PositionEntity to PositionDto
-        List<PositionDto> positionDtos = new ArrayList<>();
+        List<String> positionIds = new ArrayList<>();
         for(PositionEntity positionEntity : positionEntities) {
-            PositionDto positionDto = dtoConverter.convertToDto(positionEntity, request);
-            positionDtos.add(positionDto);
+            positionIds.add(positionEntity.getId());
         }
 
-        return positionDtos;
+        return positionIds;
     }
 
     public PositionDto updatePosition(String id, CreateUpdatePositionDto dto, HttpServletRequest request) {

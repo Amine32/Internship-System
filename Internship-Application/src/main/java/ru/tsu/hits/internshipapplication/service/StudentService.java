@@ -1,6 +1,7 @@
 package ru.tsu.hits.internshipapplication.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,8 +58,7 @@ public class StudentService {
                 .uri("http://localhost:8080/company-service/api/positions/byCompany/" + companyId)
                 .headers(httpHeaders -> httpHeaders.addAll(headers))
                 .retrieve()
-                .bodyToFlux(String.class)
-                .collectList()
+                .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
                 .block();
 
         if (positionIds == null || positionIds.isEmpty()) {

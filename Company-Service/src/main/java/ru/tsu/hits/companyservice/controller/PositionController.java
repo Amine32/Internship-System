@@ -53,9 +53,9 @@ public class PositionController {
 
     @GetMapping("/byCompany/{companyId}")
     @ApiOperation("Get positions by company ID")
-    public ResponseEntity<List<PositionDto>> getPositionsByCompanyId(@PathVariable String companyId, HttpServletRequest request) {
+    public ResponseEntity<List<String>> getPositionsByCompanyId(@PathVariable String companyId) {
         logger.info("Fetching positions with company ID {}", companyId);
-        List<PositionDto> positions = positionService.getPositionsByCompanyId(companyId, request);
+        List<String> positions = positionService.getPositionsByCompanyId(companyId);
         return new ResponseEntity<>(positions, HttpStatus.OK);
     }
 
