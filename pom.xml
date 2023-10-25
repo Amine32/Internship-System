@@ -109,6 +109,7 @@
         <module>User-Service</module>
         <module>Api-Gateway</module>
         <module>Stack-Service</module>
+        <module>Curator-Service</module>
     </modules>
 
 </project>

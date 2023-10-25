@@ -33,6 +33,10 @@ public class ApiGatewayApplication {
                         .path("/stack-service/**")
                         .filters(f -> f.stripPrefix(1))
                         .uri("http://localhost:8084"))
+                .route(p -> p
+                        .path("/curator-service/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("http://localhost:8085"))
                 .build();
     }
 }
