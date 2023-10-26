@@ -1,0 +1,44 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/Curator-Service
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+server:
+  port: 8085
+
+jwt:
+  secret: "secret"
+  excludedPaths:
+    - /swagger-ui
+    - /v3/api-docs
+    - /swagger-ui.html
+    - /webjars
+    - /v2
+    - /swagger-resources
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+

@@ -54,8 +54,18 @@ public class UserCommandService {
     @Transactional
     public void deleteUser(String id, HttpServletRequest request) {
         userValidationService.validateUserForDeletion(id);
+        UserEntity user = userQueryService.getUserById(id);  // Fetch user entity to check role before deletion
         userRepository.deleteById(id);
-        userNotificationService.notifyDeletion(id, request);
+
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String jwtToken = authHeader.substring(7);
+            if (user.getRole() == Role.STUDENT) {
+                userNotificationService.notifyStudentDeletion(id, jwtToken);
+            } else if (user.getRole() == Role.CURATOR) {
+                userNotificationService.notifyCuratorDeletion(id, jwtToken);
+            }
+        }
     }
 
     public void editUser(UserEntity user) {
@@ -85,6 +95,8 @@ public class UserCommandService {
         userEntity = userRepository.save(userEntity);
         if (userEntity.getRole() == Role.STUDENT) {
             userNotificationService.notifyStudentService(userEntity);
+        } else if (userEntity.getRole() == Role.CURATOR) {
+            userNotificationService.notifyCuratorService(userEntity);
         }
         return UserDtoConverter.convertEntityToDto(userEntity);
     }

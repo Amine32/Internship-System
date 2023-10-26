@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.tsu.hits.userservice.model.UserEntity;
 
-import javax.servlet.http.HttpServletRequest;
-
 @Service
 @RequiredArgsConstructor
 public class UserNotificationService {
@@ -23,22 +21,40 @@ public class UserNotificationService {
                 .block();
     }
 
-    public void notifyDeletion(String id, HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String jwtToken = authHeader.substring(7);
+    public void notifyCuratorService(UserEntity user) {
+        webClientBuilder.build()
+                .post()
+                .uri("http://localhost:8080/curator-service/api/curators/" + user.getId())
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
+    }
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Type", "application/json");
-            headers.set("Authorization", "Bearer " + jwtToken);
+    public void notifyStudentDeletion(String id, String jwtToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        headers.set("Authorization", "Bearer " + jwtToken);
 
-            webClientBuilder.build()
-                    .delete()
-                    .uri("http://localhost:8080/application-service/api/students/" + id)
-                    .headers(httpHeaders -> httpHeaders.addAll(headers))
-                    .retrieve()
-                    .bodyToMono(Void.class)
-                    .block();
-        }
+        webClientBuilder.build()
+                .delete()
+                .uri("http://localhost:8080/application-service/api/students/" + id)
+                .headers(httpHeaders -> httpHeaders.addAll(headers))
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
+    }
+
+    public void notifyCuratorDeletion(String id, String jwtToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        headers.set("Authorization", "Bearer " + jwtToken);
+
+        webClientBuilder.build()
+                .delete()
+                .uri("http://localhost:8080/curator-service/api/curators/" + id)
+                .headers(httpHeaders -> httpHeaders.addAll(headers))
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
     }
 }
