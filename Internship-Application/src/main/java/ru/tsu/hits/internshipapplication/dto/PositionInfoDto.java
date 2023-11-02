@@ -7,5 +7,7 @@ public class PositionInfoDto {
 
     private String companyName;
 
+    private String companyId;
+
     private String title;
 }

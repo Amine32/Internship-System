@@ -33,6 +33,7 @@ public class PositionDtoConverter {
         typeMap.addMappings(mapper -> {
             mapper.map(PositionEntity::getStatus, PositionDto::setStatus); // Enum mapping
             mapper.map(src -> src.getCompany().getName(), PositionDto::setCompanyName); // Nested property mapping
+            mapper.map(src -> src.getCompany().getId(), PositionDto::setCompanyId); //Nested proprety mapping
         });
     }
 

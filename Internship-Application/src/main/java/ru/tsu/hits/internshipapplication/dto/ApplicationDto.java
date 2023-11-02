@@ -21,5 +21,7 @@ public class ApplicationDto {
 
     private String companyName;
 
+    private String companyId;
+
     private int priority;
 }
