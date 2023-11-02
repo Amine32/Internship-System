@@ -60,4 +60,16 @@ public class CuratorService {
             curatorRepository.save(curatorEntity);
         }
     }
+
+    //Would require some refactoring later (make a method in the repository to find curators by companyId
+    public List<CuratorDto> getCuratorsByCompanyId(String companyId, HttpServletRequest request) {
+        List<CuratorEntity> curatorEntities = curatorRepository.findAll()
+                .stream()
+                .filter(curator -> curator.getCompany_ids().contains(companyId))
+                .collect(Collectors.toList());
+
+        return curatorEntities.stream()
+                .map(curatorEntity -> curatorDtoConverter.convertEntityToDto(curatorEntity, request))
+                .collect(Collectors.toList());
+    }
 }

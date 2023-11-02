@@ -52,4 +52,11 @@ public class CuratorController {
     public void addCompany(@PathVariable String curatorId, @PathVariable String companyId) {
         curatorService.addCompanyToCurator(curatorId, companyId);
     }
+
+    @GetMapping("/companies/{companyId}")
+    @ApiOperation("Get curators by company id")
+    public ResponseEntity<List<CuratorDto>> getCuratorsByCompanyId(@PathVariable String companyId, HttpServletRequest request) {
+        List<CuratorDto> curators = curatorService.getCuratorsByCompanyId(companyId, request);
+        return new ResponseEntity<>(curators, HttpStatus.OK);
+    }
 }
