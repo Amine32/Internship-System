@@ -54,7 +54,7 @@ public class CuratorController {
     }
 
     @DeleteMapping ("/{curatorId}/companies/{companyId}")
-    @ApiOperation("Add a company to a curator")
+    @ApiOperation("Remove a company from a curator")
     public void removeCompany(@PathVariable String curatorId, @PathVariable String companyId) {
         curatorService.removeCompanyFromCurator(curatorId, companyId);
     }
