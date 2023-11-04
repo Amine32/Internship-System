@@ -53,6 +53,12 @@ public class CuratorController {
         curatorService.addCompanyToCurator(curatorId, companyId);
     }
 
+    @DeleteMapping ("/{curatorId}/companies/{companyId}")
+    @ApiOperation("Add a company to a curator")
+    public void removeCompany(@PathVariable String curatorId, @PathVariable String companyId) {
+        curatorService.removeCompanyFromCurator(curatorId, companyId);
+    }
+
     @GetMapping("/companies/{companyId}")
     @ApiOperation("Get curators by company id")
     public ResponseEntity<List<CuratorDto>> getCuratorsByCompanyId(@PathVariable String companyId, HttpServletRequest request) {

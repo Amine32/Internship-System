@@ -61,7 +61,21 @@ public class CuratorService {
         }
     }
 
+    @Transactional
+    public void removeCompanyFromCurator(String curatorId, String companyId) {
+        CuratorEntity curatorEntity = curatorRepository.findById(curatorId)
+                .orElseThrow(() -> new CuratorNotFoundException(curatorId));
+
+        List<String> companyIds = curatorEntity.getCompany_ids();
+        if (companyIds.contains(companyId)) {
+            companyIds.remove(companyId);
+            curatorEntity.setCompany_ids(companyIds);
+            curatorRepository.save(curatorEntity);
+        }
+    }
+
     //Would require some refactoring later (make a method in the repository to find curators by companyId
+    @Transactional(readOnly = true)
     public List<CuratorDto> getCuratorsByCompanyId(String companyId, HttpServletRequest request) {
         List<CuratorEntity> curatorEntities = curatorRepository.findAll()
                 .stream()
