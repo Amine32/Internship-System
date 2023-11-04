@@ -71,6 +71,7 @@ public class ApplicationDtoConverter {
         if (positionDto != null) {
             dto.setPosition(positionDto.getTitle());
             dto.setCompanyName(positionDto.getCompanyName());
+            dto.setCompanyId(positionDto.getCompanyId());
         }
 
         return dto;
