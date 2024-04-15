@@ -1,5 +1,6 @@
 package ru.tsu.hits.companyservice.dto.converter;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
@@ -14,7 +15,6 @@ import ru.tsu.hits.companyservice.model.PositionEntity;
 import ru.tsu.hits.companyservice.service.ApplicationCountService;
 import ru.tsu.hits.companyservice.service.SharedService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,9 +23,6 @@ import java.util.List;
 public class PositionDtoConverter {
 
     private static final ModelMapper modelMapper = new ModelMapper();
-    private final WebClient.Builder webClientBuilder;
-    private final SharedService sharedService;
-    private final ApplicationCountService applicationCountService;
 
     static {
         // Create a TypeMap for custom mapping
@@ -33,9 +30,13 @@ public class PositionDtoConverter {
         typeMap.addMappings(mapper -> {
             mapper.map(PositionEntity::getStatus, PositionDto::setStatus); // Enum mapping
             mapper.map(src -> src.getCompany().getName(), PositionDto::setCompanyName); // Nested property mapping
-            mapper.map(src -> src.getCompany().getId(), PositionDto::setCompanyId); //Nested proprety mapping
+            mapper.map(src -> src.getCompany().getId(), PositionDto::setCompanyId); //Nested property mapping
         });
     }
+
+    private final WebClient.Builder webClientBuilder;
+    private final SharedService sharedService;
+    private final ApplicationCountService applicationCountService;
 
     public PositionDto convertToDto(PositionEntity entity, HttpServletRequest request) {
         PositionDto dto = modelMapper.map(entity, PositionDto.class);
@@ -57,7 +58,7 @@ public class PositionDtoConverter {
         }
 
         // Similar for Stack
-        if(entity.getStackId() != null) {
+        if (entity.getStackId() != null) {
             List<Long> singleStackId = Collections.singletonList(entity.getStackId());
             List<String> stackNames = webClient.post()
                     .uri("http://localhost:8080/stack-service/api/stacks/namesByIds")

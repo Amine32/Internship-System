@@ -1,6 +1,6 @@
 package ru.tsu.hits.stackservice.controller;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.stackservice.dto.CreateUpdateTechnologyDto;
@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/technologies")
-@Api(tags = "Technology API")
+@Tag(name = "Technology API")
 public class TechnologyController {
 
     private final TechnologyService technologyService;

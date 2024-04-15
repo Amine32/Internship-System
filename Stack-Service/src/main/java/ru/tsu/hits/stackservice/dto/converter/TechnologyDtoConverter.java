@@ -13,7 +13,7 @@ public class TechnologyDtoConverter {
     public static TechnologyEntity dtoToEntity(CreateUpdateTechnologyDto dto) {
         TechnologyEntity entity = new TechnologyEntity();
         entity.setName(dto.getName());
-        // Related stacks and languages will be set in the service
+        // Related stacks and languages will be set in the service layer
         return entity;
     }
 

@@ -1,12 +1,14 @@
 package ru.tsu.hits.userservice.model;
 
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "groups")
 public class GroupEntity {
 

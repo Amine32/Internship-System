@@ -1,5 +1,6 @@
 package ru.tsu.hits.companyservice.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,6 @@ import ru.tsu.hits.companyservice.exception.PositionNotFoundException;
 import ru.tsu.hits.companyservice.model.PositionEntity;
 import ru.tsu.hits.companyservice.repository.PositionRepository;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,7 +47,7 @@ public class PositionService {
 
         //convert PositionEntity to PositionDto
         List<String> positionIds = new ArrayList<>();
-        for(PositionEntity positionEntity : positionEntities) {
+        for (PositionEntity positionEntity : positionEntities) {
             positionIds.add(positionEntity.getId());
         }
 

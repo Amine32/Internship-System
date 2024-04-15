@@ -39,7 +39,7 @@ public class GroupService {
         UserEntity student = userQueryService.getUserById(studentId);
 
         //check if student already belongs to any group
-        if(student.getGroup() != null) {
+        if (student.getGroup() != null) {
             throw new StudentAlreadyBelongsToGroup("Student already belongs to a group");
         }
 

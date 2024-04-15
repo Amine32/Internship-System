@@ -1,6 +1,8 @@
 package ru.tsu.hits.userservice.controller;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.userservice.dto.CreateUserDto;
@@ -11,14 +13,12 @@ import ru.tsu.hits.userservice.model.Role;
 import ru.tsu.hits.userservice.service.UserCommandService;
 import ru.tsu.hits.userservice.service.UserQueryService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@Api(tags = "User API")
+@Tag(name = "User API")
 public class UserController {
 
     private final UserCommandService userCommandService;

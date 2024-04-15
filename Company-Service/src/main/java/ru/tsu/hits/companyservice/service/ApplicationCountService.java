@@ -1,5 +1,6 @@
 package ru.tsu.hits.companyservice.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -8,7 +9,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Service

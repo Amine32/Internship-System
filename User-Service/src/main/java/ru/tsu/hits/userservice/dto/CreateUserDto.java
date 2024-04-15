@@ -1,8 +1,10 @@
 package ru.tsu.hits.userservice.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class CreateUserDto {
 
     private String firstName;

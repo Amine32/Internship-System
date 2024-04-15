@@ -1,5 +1,6 @@
 package ru.tsu.hits.curatorservice.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +10,6 @@ import ru.tsu.hits.curatorservice.exception.CuratorNotFoundException;
 import ru.tsu.hits.curatorservice.model.CuratorEntity;
 import ru.tsu.hits.curatorservice.repository.CuratorRepository;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,10 +53,10 @@ public class CuratorService {
         CuratorEntity curatorEntity = curatorRepository.findById(curatorId)
                 .orElseThrow(() -> new CuratorNotFoundException(curatorId));
 
-        List<String> companyIds = curatorEntity.getCompany_ids();
+        List<String> companyIds = curatorEntity.getCompanyIds();
         if (!companyIds.contains(companyId)) {
             companyIds.add(companyId);
-            curatorEntity.setCompany_ids(companyIds);
+            curatorEntity.setCompanyIds(companyIds);
             curatorRepository.save(curatorEntity);
         }
     }
@@ -66,10 +66,10 @@ public class CuratorService {
         CuratorEntity curatorEntity = curatorRepository.findById(curatorId)
                 .orElseThrow(() -> new CuratorNotFoundException(curatorId));
 
-        List<String> companyIds = curatorEntity.getCompany_ids();
+        List<String> companyIds = curatorEntity.getCompanyIds();
         if (companyIds.contains(companyId)) {
             companyIds.remove(companyId);
-            curatorEntity.setCompany_ids(companyIds);
+            curatorEntity.setCompanyIds(companyIds);
             curatorRepository.save(curatorEntity);
         }
     }
@@ -77,10 +77,7 @@ public class CuratorService {
     //Would require some refactoring later (make a method in the repository to find curators by companyId
     @Transactional(readOnly = true)
     public List<CuratorDto> getCuratorsByCompanyId(String companyId, HttpServletRequest request) {
-        List<CuratorEntity> curatorEntities = curatorRepository.findAll()
-                .stream()
-                .filter(curator -> curator.getCompany_ids().contains(companyId))
-                .collect(Collectors.toList());
+        List<CuratorEntity> curatorEntities = curatorRepository.findCuratorEntitiesByCompanyIdsContaining(companyId);
 
         return curatorEntities.stream()
                 .map(curatorEntity -> curatorDtoConverter.convertEntityToDto(curatorEntity, request))

@@ -1,10 +1,9 @@
 package ru.tsu.hits.companyservice.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -12,7 +11,6 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@ToString
 @Table(name = "positions")
 public class PositionEntity {
 
@@ -35,6 +33,9 @@ public class PositionEntity {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private CompanyEntity company;
 
     @PrePersist
     public void prePersist() {
@@ -47,9 +48,5 @@ public class PositionEntity {
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private CompanyEntity company;
 }
 

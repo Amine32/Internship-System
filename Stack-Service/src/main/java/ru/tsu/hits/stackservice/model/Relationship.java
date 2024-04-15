@@ -1,30 +1,15 @@
 package ru.tsu.hits.stackservice.model;
 
-import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class Relationship {
     private String fromType;
     private Long fromId;
     private String toType;
     private Long toId;
-
-    public void setFromType(String fromType) {
-        this.fromType = fromType;
-    }
-
-    public void setFromId(Long fromId) {
-        this.fromId = fromId;
-    }
-
-    public void setToType(String toType) {
-        this.toType = toType;
-    }
-
-    public void setToId(Long toId) {
-        this.toId = toId;
-    }
 
     // Parsing method
     public static Relationship fromString(String str) {

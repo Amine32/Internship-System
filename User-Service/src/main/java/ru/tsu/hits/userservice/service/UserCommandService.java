@@ -1,5 +1,6 @@
 package ru.tsu.hits.userservice.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,8 +13,6 @@ import ru.tsu.hits.userservice.dto.converter.UserDtoConverter;
 import ru.tsu.hits.userservice.model.Role;
 import ru.tsu.hits.userservice.model.UserEntity;
 import ru.tsu.hits.userservice.repository.UserRepository;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Service
 @RequiredArgsConstructor

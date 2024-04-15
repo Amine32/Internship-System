@@ -18,15 +18,15 @@ public class UserValidationService {
     private final UserRepository userRepository;
 
     public void validateNewUser(UserEntity user) {
-        if(userRepository.findByEmail(user.getEmail()) != null) {
+        if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new IllegalArgumentException("User already exists");
         }
     }
 
     public void validateUserForEdit(UserEntity existingUser, UpdateUserDto dto) {
         UserEntity checkEmail = userRepository.findByEmail(dto.getEmail());
-        if(!Objects.equals(existingUser.getEmail(), dto.getEmail()) && checkEmail != null) {
-            throw new  IllegalArgumentException("Email already exists");
+        if (!Objects.equals(existingUser.getEmail(), dto.getEmail()) && checkEmail != null) {
+            throw new IllegalArgumentException("Email already exists");
         }
     }
 

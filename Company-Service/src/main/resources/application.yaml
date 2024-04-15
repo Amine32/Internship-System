@@ -26,11 +26,4 @@ server:
   port: 8083
 
 jwt:
-  secret: "secret"
-  excludedPaths:
-    - /swagger-ui
-    - /v3/api-docs
-    - /swagger-ui.html
-    - /webjars
-    - /v2
-    - /swagger-resources
+  secret: "dmVyeWJpZ3NlY3JldHRoYXRpdHNoYWxsYmVzb2JpZ215ZGlja2h1cnRz"

@@ -1,6 +1,6 @@
 package ru.tsu.hits.userservice.controller;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,7 @@ import ru.tsu.hits.userservice.security.JwtUtil;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-@Api(tags = "Token Validation API")
+@Tag(name = "Token Validation API")
 public class TokenController {
 
     private final JwtUtil jwtUtil;
@@ -21,7 +21,7 @@ public class TokenController {
     @PostMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestBody String token) {
         try {
-            boolean isValid = jwtUtil.validateToken(token);
+            boolean isValid = jwtUtil.validateJwtToken(token);
             return ResponseEntity.ok(isValid);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

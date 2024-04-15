@@ -1,7 +1,9 @@
 package ru.tsu.hits.companyservice.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,14 +14,12 @@ import ru.tsu.hits.companyservice.dto.CreateUpdatePositionDto;
 import ru.tsu.hits.companyservice.dto.PositionDto;
 import ru.tsu.hits.companyservice.service.PositionService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/positions")
 @RequiredArgsConstructor
-@Api(tags = "Position API")
+@Tag(name = "Position API")
 public class PositionController {
 
     private final PositionService positionService;
@@ -28,7 +28,7 @@ public class PositionController {
 
 
     @PostMapping
-    @ApiOperation("Create a new position")
+    @Operation(summary = "Create a new position")
     public ResponseEntity<PositionDto> createPosition(@Valid @RequestBody CreateUpdatePositionDto dto, HttpServletRequest request) {
         logger.info("Creating new position with title {}", dto.getTitle());
         PositionDto newPosition = positionService.createPosition(dto, request);
@@ -36,7 +36,7 @@ public class PositionController {
     }
 
     @GetMapping("/{id}")
-    @ApiOperation("Get a position by ID")
+    @Operation(summary = "Get a position by ID")
     public ResponseEntity<PositionDto> getPositionById(@PathVariable String id, HttpServletRequest request) {
         logger.info("Fetching position with ID {}", id);
         PositionDto position = positionService.getPositionById(id, request);
@@ -44,7 +44,7 @@ public class PositionController {
     }
 
     @GetMapping
-    @ApiOperation("Get all positions")
+    @Operation(summary = "Get all positions")
     public ResponseEntity<List<PositionDto>> getAllPositions(HttpServletRequest request) {
         logger.info("Fetching all positions");
         List<PositionDto> positions = positionService.getAllPositions(request);
@@ -52,7 +52,7 @@ public class PositionController {
     }
 
     @GetMapping("/byCompany/{companyId}")
-    @ApiOperation("Get positions by company ID")
+    @Operation(summary = "Get positions by company ID")
     public ResponseEntity<List<String>> getPositionsByCompanyId(@PathVariable String companyId) {
         logger.info("Fetching positions with company ID {}", companyId);
         List<String> positions = positionService.getPositionsByCompanyId(companyId);
@@ -60,7 +60,7 @@ public class PositionController {
     }
 
     @PutMapping("/{id}")
-    @ApiOperation("Update a position by ID")
+    @Operation(summary = "Update a position by ID")
     public ResponseEntity<PositionDto> updatePosition(@PathVariable String id, @Valid @RequestBody CreateUpdatePositionDto updatePositionDTO, HttpServletRequest request) {
         logger.info("Updating position with ID {}", id);
         PositionDto updatedPosition = positionService.updatePosition(id, updatePositionDTO, request);
@@ -68,7 +68,7 @@ public class PositionController {
     }
 
     @DeleteMapping("/{id}")
-    @ApiOperation("Delete a position by ID")
+    @Operation(summary = "Delete a position by ID")
     public ResponseEntity<Void> deletePosition(@PathVariable String id) {
         logger.info("Deleting position with ID {}", id);
         positionService.deletePosition(id);
@@ -76,7 +76,7 @@ public class PositionController {
     }
 
     @PutMapping("/{id}/decrementPlacesLeft")
-    @ApiOperation("Decrement the number of places left for a position")
+    @Operation(summary = "Decrement the number of places left for a position")
     public ResponseEntity<Void> decrementPlacesLeft(@PathVariable String id) {
         logger.info("Decrementing the number of places left for position with ID {}", id);
         positionService.decrementPlacesLeft(id);

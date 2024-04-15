@@ -1,10 +1,9 @@
 package ru.tsu.hits.companyservice.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -12,7 +11,6 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@ToString
 @Table(name = "companies")
 public class CompanyEntity {
 

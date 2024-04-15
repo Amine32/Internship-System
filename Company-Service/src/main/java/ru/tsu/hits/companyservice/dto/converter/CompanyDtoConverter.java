@@ -1,5 +1,6 @@
 package ru.tsu.hits.companyservice.dto.converter;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -8,7 +9,6 @@ import ru.tsu.hits.companyservice.dto.CreateUpdateCompanyDto;
 import ru.tsu.hits.companyservice.dto.PositionDto;
 import ru.tsu.hits.companyservice.model.CompanyEntity;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

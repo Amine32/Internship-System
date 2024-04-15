@@ -15,3 +15,9 @@ spring:
               - PATCH
             allowedHeaders: '*'
             allowCredentials: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: env

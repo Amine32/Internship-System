@@ -1,5 +1,6 @@
 package ru.tsu.hits.companyservice.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -9,7 +10,6 @@ import ru.tsu.hits.companyservice.dto.converter.CompanyDtoConverter;
 import ru.tsu.hits.companyservice.model.CompanyEntity;
 import ru.tsu.hits.companyservice.repository.CompanyRepository;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 

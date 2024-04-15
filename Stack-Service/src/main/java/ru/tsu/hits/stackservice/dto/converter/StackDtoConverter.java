@@ -15,7 +15,7 @@ public class StackDtoConverter {
     public static StackEntity dtoToEntity(CreateUpdateStackDto dto) {
         StackEntity entity = new StackEntity();
         entity.setName(dto.getName());
-        // Related languages and technologies will be set in the service
+        // Related languages and technologies will be set in the service layer
         return entity;
     }
 
