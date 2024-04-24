@@ -17,9 +17,7 @@ import ru.tsu.hits.userservice.model.Role;
 import ru.tsu.hits.userservice.model.UserEntity;
 import ru.tsu.hits.userservice.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -30,8 +28,7 @@ public class UserQueryService {
 
     @Transactional(readOnly = true)
     public UserEntity getUserById(String id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
     }
 
     @Transactional(readOnly = true)
@@ -51,8 +48,7 @@ public class UserQueryService {
 
     @Transactional(readOnly = true)
     public Page<UserDto> getUsersByRole(Role role, Pageable pageable) {
-        return userRepository.findAllByRolesContains(role, pageable)
-                .map(UserDtoConverter::convertEntityToDto);
+        return userRepository.findAllByRolesContains(role, pageable).map(UserDtoConverter::convertEntityToDto);
     }
 
     @Transactional(readOnly = true)

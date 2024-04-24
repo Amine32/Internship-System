@@ -13,7 +13,6 @@ import ru.tsu.hits.userservice.model.GroupEntity;
 import ru.tsu.hits.userservice.model.UserEntity;
 import ru.tsu.hits.userservice.repository.GroupRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

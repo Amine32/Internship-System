@@ -15,7 +15,6 @@ import ru.tsu.hits.companyservice.dto.CreateUpdatePositionDto;
 import ru.tsu.hits.companyservice.dto.PositionDto;
 import ru.tsu.hits.companyservice.service.PositionService;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController

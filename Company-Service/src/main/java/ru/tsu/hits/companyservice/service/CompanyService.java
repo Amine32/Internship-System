@@ -11,9 +11,6 @@ import ru.tsu.hits.companyservice.dto.converter.CompanyDtoConverter;
 import ru.tsu.hits.companyservice.model.CompanyEntity;
 import ru.tsu.hits.companyservice.repository.CompanyRepository;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
