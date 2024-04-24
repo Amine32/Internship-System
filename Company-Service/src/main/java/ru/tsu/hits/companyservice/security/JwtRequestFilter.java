@@ -29,10 +29,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String jwt = getJwtFromRequest(request);
         if (StringUtils.hasText(jwt) && jwtUtil.validateJwtToken(jwt)) {
             String username = jwtUtil.getUserNameFromJwtToken(jwt);
+            String userId = jwtUtil.getUserIdFromJwtToken(jwt);
             List<SimpleGrantedAuthority> authorities = jwtUtil.getAuthoritiesFromJwtToken(jwt);
 
+            CustomPrincipal principal = new CustomPrincipal(username, userId);
+
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    username, null, authorities);
+                    principal, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         chain.doFilter(request, response);

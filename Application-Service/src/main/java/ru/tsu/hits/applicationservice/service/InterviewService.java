@@ -1,6 +1,5 @@
 package ru.tsu.hits.applicationservice.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +21,7 @@ public class InterviewService {
     private final ApplicationService applicationService;
 
     @Transactional
-    public InterviewDto createInterview(CreateUpdateInterviewDto dto, String applicationId, HttpServletRequest request) {
+    public InterviewDto createInterview(CreateUpdateInterviewDto dto, String applicationId) {
         InterviewEntity interviewEntity = InterviewDtoConverter.convertDtoToEntity(dto);
 
         interviewEntity.setId(UUID.randomUUID().toString());
@@ -31,7 +30,7 @@ public class InterviewService {
         interviewEntity = interviewRepository.save(interviewEntity);
 
         applicationService.addInterview(applicationId, interviewEntity);
-        applicationService.addStatus(applicationId, Status.INTERVIEW_IS_APPOINTED.toString(), request);
+        applicationService.addStatus(applicationId, Status.INTERVIEW_IS_APPOINTED.toString());
 
         return InterviewDtoConverter.convertEntityToDto(interviewEntity);
     }

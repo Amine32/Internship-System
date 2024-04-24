@@ -1,8 +1,6 @@
 package ru.tsu.hits.applicationservice.dto.converter;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.tsu.hits.applicationservice.dto.ApplicationDto;
 import ru.tsu.hits.applicationservice.dto.InterviewDto;
@@ -26,7 +24,7 @@ public class ApplicationDtoConverter {
         webClientBuilder = WebClient.builder();
     }
 
-    public static ApplicationDto convertEntityToDto(ApplicationEntity application, HttpServletRequest request) {
+    public static ApplicationDto convertEntityToDto(ApplicationEntity application) {
         ApplicationDto dto = modelMapper.map(application, ApplicationDto.class);
 
         List<StatusHistory> statusHistoryList = application.getStatusHistory();
@@ -55,15 +53,11 @@ public class ApplicationDtoConverter {
 
         dto.setInterviews(interviewDtos);
 
-        // Create HttpHeaders instance and set the Authorization header
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", request.getHeader("Authorization"));
-
         WebClient webClient = webClientBuilder.build();
         PositionInfoDto positionDto = webClient
                 .get()
                 .uri("http://localhost:8080/company-service/api/positions/" + application.getPositionId())
-                .headers(httpHeaders -> httpHeaders.addAll(headers))
+                .header("Service-Name", "Application-Service")
                 .retrieve()
                 .bodyToMono(PositionInfoDto.class)
                 .block();

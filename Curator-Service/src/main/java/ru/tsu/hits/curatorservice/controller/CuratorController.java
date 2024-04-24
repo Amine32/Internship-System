@@ -2,7 +2,6 @@ package ru.tsu.hits.curatorservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +28,14 @@ public class CuratorController {
 
     @GetMapping
     @Operation(summary = "Get all curators")
-    public List<CuratorDto> getAllCurators(HttpServletRequest request) {
-        return curatorService.getAllCurators(request);
+    public List<CuratorDto> getAllCurators() {
+        return curatorService.getAllCurators();
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get curator by id")
-    public ResponseEntity<CuratorDto> getCuratorById(@PathVariable String id, HttpServletRequest request) {
-        CuratorDto curatorDto = curatorService.getCuratorById(id, request);
+    public ResponseEntity<CuratorDto> getCuratorById(@PathVariable String id) {
+        CuratorDto curatorDto = curatorService.getCuratorById(id);
         return new ResponseEntity<>(curatorDto, HttpStatus.OK);
     }
 
@@ -60,7 +59,7 @@ public class CuratorController {
 
     @GetMapping("/companies/{companyId}")
     @Operation(summary = "Get curators by company id")
-    public List<CuratorDto> getCuratorsByCompanyId(@PathVariable String companyId, HttpServletRequest request) {
-        return curatorService.getCuratorsByCompanyId(companyId, request);
+    public List<CuratorDto> getCuratorsByCompanyId(@PathVariable String companyId) {
+        return curatorService.getCuratorsByCompanyId(companyId);
     }
 }

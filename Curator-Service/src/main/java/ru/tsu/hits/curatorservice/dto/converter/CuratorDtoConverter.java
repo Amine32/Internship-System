@@ -1,6 +1,5 @@
 package ru.tsu.hits.curatorservice.dto.converter;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.tsu.hits.curatorservice.dto.CompanyDto;
@@ -16,14 +15,14 @@ public class CuratorDtoConverter {
 
     private final CompanyServiceClient companyServiceClient;
 
-    public CuratorDto convertEntityToDto(CuratorEntity entity, HttpServletRequest request) {
+    public CuratorDto convertEntityToDto(CuratorEntity entity) {
         CuratorDto dto = new CuratorDto();
         dto.setId(entity.getId());
-        dto.setCompanies(getCompanies(entity.getCompanyIds(), request));
+        dto.setCompanies(getCompanies(entity.getCompanyIds()));
         return dto;
     }
 
-    private List<CompanyDto> getCompanies(List<String> companyIds, HttpServletRequest request) {
-        return companyServiceClient.getCompanies(companyIds, request);
+    private List<CompanyDto> getCompanies(List<String> companyIds) {
+        return companyServiceClient.getCompanies(companyIds);
     }
 }

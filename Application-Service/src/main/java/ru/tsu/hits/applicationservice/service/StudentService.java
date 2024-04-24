@@ -1,21 +1,22 @@
 package ru.tsu.hits.applicationservice.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.tsu.hits.applicationservice.dto.StudentDto;
-import ru.tsu.hits.applicationservice.dto.UserIdDto;
 import ru.tsu.hits.applicationservice.dto.converter.StudentDtoConverter;
 import ru.tsu.hits.applicationservice.exception.StudentNotFoundException;
 import ru.tsu.hits.applicationservice.model.StudentProfile;
 import ru.tsu.hits.applicationservice.repository.StudentRepository;
+import ru.tsu.hits.applicationservice.security.CustomPrincipal;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -30,8 +31,8 @@ public class StudentService {
     private final WebClient.Builder webClientBuilder;
 
     @Transactional(readOnly = true)
-    public StudentDto getStudentDtoById(String id, HttpServletRequest request) {
-        return StudentDtoConverter.convertEntityToDto(getStudentById(id), request);
+    public StudentDto getStudentDtoById(String id) {
+        return StudentDtoConverter.convertEntityToDto(getStudentById(id));
     }
 
     private StudentProfile getStudentById(String id) {
@@ -40,23 +41,20 @@ public class StudentService {
     }
 
     @Transactional(readOnly = true)
-    public List<StudentDto> getAllStudents(HttpServletRequest request) {
+    public List<StudentDto> getAllStudents() {
         return studentRepository.findAll()
                 .stream()
-                .map(entity -> StudentDtoConverter.convertEntityToDto(entity, request))
+                .map(StudentDtoConverter::convertEntityToDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<StudentDto> getStudentsByCompanyId(String companyId, HttpServletRequest request) {
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", request.getHeader("Authorization"));
+    public List<StudentDto> getStudentsByCompanyId(String companyId) {
 
         List<String> positionIds = webClientBuilder.build()
                 .get()
                 .uri("http://localhost:8080/company-service/api/positions/byCompany/" + companyId)
-                .headers(httpHeaders -> httpHeaders.addAll(headers))
+                .header("Service-Name", "Application-Service")
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<String>>() {
                 })
@@ -69,39 +67,27 @@ public class StudentService {
         List<StudentProfile> students = studentRepository.findByApplications_PositionIdIn(positionIds);
 
         return students.stream()
-                .map(student -> StudentDtoConverter.convertEntityToDto(student, request))
+                .map(StudentDtoConverter::convertEntityToDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public StudentProfile getStudentByToken(HttpServletRequest request) {
-
-        // Create HttpHeaders instance and set the Authorization header
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", request.getHeader("Authorization"));
-
-        // Call the validation endpoint
-        UserIdDto userIdDto = webClientBuilder.build()
-                .get()
-                .uri("http://localhost:8080/user-service/api/users/jwt")
-                .headers(httpHeaders -> httpHeaders.addAll(headers))
-                .retrieve()
-                .bodyToMono(UserIdDto.class)
-                .block();
-
-
-        assert userIdDto != null;
-        return studentRepository.findById(userIdDto.getUserId())
-                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+    public StudentProfile getCurrentStudent() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof CustomPrincipal principal) {
+            return studentRepository.findById(principal.getUserId())
+                    .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + principal.getUserId()));
+        }
+        throw new StudentNotFoundException("No authenticated student found");
     }
 
     @Transactional
-    public ResponseEntity<String> addResume(MultipartFile file, HttpServletRequest request) {
+    public ResponseEntity<String> addResume(MultipartFile file) {
         if (file.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No file selected for upload");
         }
 
-        StudentProfile studentProfile = getStudentByToken(request);
+        StudentProfile studentProfile = getCurrentStudent();
 
         try {
             studentProfile.setResume(file.getBytes());

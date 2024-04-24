@@ -1,7 +1,6 @@
 package ru.tsu.hits.userservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.tsu.hits.userservice.model.UserEntity;
@@ -16,6 +15,7 @@ public class UserNotificationService {
         webClientBuilder.build()
                 .post()
                 .uri("http://localhost:8080/application-service/api/students/" + user.getId())
+                .header("Service-Name", "User-Service")
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();
@@ -25,34 +25,27 @@ public class UserNotificationService {
         webClientBuilder.build()
                 .post()
                 .uri("http://localhost:8080/curator-service/api/curators/" + user.getId())
+                .header("Service-Name", "User-Service")
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();
     }
 
-    public void notifyStudentDeletion(String id, String jwtToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json");
-        headers.set("Authorization", "Bearer " + jwtToken);
-
+    public void notifyStudentDeletion(String id) {
         webClientBuilder.build()
                 .delete()
                 .uri("http://localhost:8080/application-service/api/students/" + id)
-                .headers(httpHeaders -> httpHeaders.addAll(headers))
+                .header("Service-Name", "User-Service")
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();
     }
 
-    public void notifyCuratorDeletion(String id, String jwtToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json");
-        headers.set("Authorization", "Bearer " + jwtToken);
-
+    public void notifyCuratorDeletion(String id) {
         webClientBuilder.build()
                 .delete()
                 .uri("http://localhost:8080/curator-service/api/curators/" + id)
-                .headers(httpHeaders -> httpHeaders.addAll(headers))
+                .header("Service-Name", "User-Service")
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();

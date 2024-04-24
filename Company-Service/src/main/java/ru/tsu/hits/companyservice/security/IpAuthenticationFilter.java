@@ -1,4 +1,4 @@
-package ru.tsu.hits.applicationservice.security;
+package ru.tsu.hits.companyservice.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,7 +14,6 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @Component
@@ -28,7 +27,7 @@ public class IpAuthenticationFilter extends GenericFilterBean {
         String remoteIp = httpRequest.getRemoteAddr();
         String serviceName = httpRequest.getHeader("Service-Name");
 
-        if (trustedIps.contains(remoteIp) && Objects.equals(serviceName, "Company-Service")) {
+        if (trustedIps.contains(remoteIp) && serviceName != null) {
             Authentication auth = new UsernamePasswordAuthenticationToken("internalService", null, List.of(() -> "ROLE_TRUSTED_SERVICE"));
             SecurityContextHolder.getContext().setAuthentication(auth);
         }

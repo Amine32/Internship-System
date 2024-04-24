@@ -1,6 +1,5 @@
 package ru.tsu.hits.userservice.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -54,19 +53,14 @@ public class UserCommandService {
     }
 
     @Transactional
-    public void deleteUser(String id, HttpServletRequest request) {
+    public void deleteUser(String id) {
         userValidationService.validateUserForDeletion(id);
         UserEntity user = userQueryService.getUserById(id);  // Fetch user entity to check role before deletion
         userRepository.deleteById(id);
-
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String jwtToken = authHeader.substring(7);
-            if (user.getRoles().contains(Role.STUDENT)) {
-                userNotificationService.notifyStudentDeletion(id, jwtToken);
-            } else if (user.getRoles().contains(Role.CURATOR)) {
-                userNotificationService.notifyCuratorDeletion(id, jwtToken);
-            }
+        if (user.getRoles().contains(Role.STUDENT)) {
+            userNotificationService.notifyStudentDeletion(id);
+        } else if (user.getRoles().contains(Role.CURATOR)) {
+            userNotificationService.notifyCuratorDeletion(id);
         }
     }
 

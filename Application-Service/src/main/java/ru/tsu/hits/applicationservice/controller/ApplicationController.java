@@ -1,7 +1,6 @@
 package ru.tsu.hits.applicationservice.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,23 +19,23 @@ public class ApplicationController {
     private final ApplicationService applicationService;
 
     @PostMapping("/{positionId}")
-    public ApplicationDto createApplication(@PathVariable String positionId, HttpServletRequest request) {
-        return applicationService.createApplication(positionId, request);
+    public ApplicationDto createApplication(@PathVariable String positionId) {
+        return applicationService.createApplication(positionId);
     }
 
     @GetMapping("/{applicationId}")
-    public ApplicationDto getApplicationById(@PathVariable String applicationId, HttpServletRequest request) {
-        return applicationService.getApplicationDtoById(applicationId, request);
+    public ApplicationDto getApplicationById(@PathVariable String applicationId) {
+        return applicationService.getApplicationDtoById(applicationId);
     }
 
     @PostMapping("/{applicationId}/status/{status}")
-    public ApplicationDto addStatus(@PathVariable String applicationId, @PathVariable String status, HttpServletRequest request) {
-        return applicationService.addStatus(applicationId, status, request);
+    public ApplicationDto addStatus(@PathVariable String applicationId, @PathVariable String status) {
+        return applicationService.addStatus(applicationId, status);
     }
 
     @GetMapping("/position/{positionId}")
-    public List<ApplicationDto> getAllByPositionId(@PathVariable String positionId, HttpServletRequest request) {
-        return applicationService.getAllByPositionId(positionId, request);
+    public List<ApplicationDto> getAllByPositionId(@PathVariable String positionId) {
+        return applicationService.getAllByPositionId(positionId);
     }
 
     @DeleteMapping("/{applicationId}")

@@ -1,7 +1,6 @@
 package ru.tsu.hits.applicationservice.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.applicationservice.dto.CreateUpdateInterviewDto;
@@ -17,8 +16,8 @@ public class InterviewController {
     private final InterviewService interviewService;
 
     @PostMapping("/{applicationId}")
-    public InterviewDto createInterview(@RequestBody CreateUpdateInterviewDto dto, @PathVariable String applicationId, HttpServletRequest request) {
-        return interviewService.createInterview(dto, applicationId, request);
+    public InterviewDto createInterview(@RequestBody CreateUpdateInterviewDto dto, @PathVariable String applicationId) {
+        return interviewService.createInterview(dto, applicationId);
     }
 
     @GetMapping("{id}")

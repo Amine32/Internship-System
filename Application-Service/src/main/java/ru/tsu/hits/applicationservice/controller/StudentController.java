@@ -1,7 +1,6 @@
 package ru.tsu.hits.applicationservice.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,18 +24,18 @@ public class StudentController {
     }
 
     @GetMapping()
-    public List<StudentDto> getAllStudents(HttpServletRequest request) {
-        return studentService.getAllStudents(request);
+    public List<StudentDto> getAllStudents() {
+        return studentService.getAllStudents();
     }
 
     @GetMapping("/byCompany/{companyId}")
-    public List<StudentDto> getStudentsByCompanyId(@PathVariable String companyId, HttpServletRequest request) {
-        return studentService.getStudentsByCompanyId(companyId, request);
+    public List<StudentDto> getStudentsByCompanyId(@PathVariable String companyId) {
+        return studentService.getStudentsByCompanyId(companyId);
     }
 
     @GetMapping("/{id}")
-    public StudentDto getStudentById(@PathVariable String id, HttpServletRequest request) {
-        return studentService.getStudentDtoById(id, request);
+    public StudentDto getStudentById(@PathVariable String id) {
+        return studentService.getStudentDtoById(id);
     }
 
     @DeleteMapping("/{id}")
@@ -45,8 +44,8 @@ public class StudentController {
     }
 
     @PostMapping("/resume")
-    public ResponseEntity<String> addResume(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
-        return studentService.addResume(file, request);
+    public ResponseEntity<String> addResume(@RequestParam("file") MultipartFile file) {
+        return studentService.addResume(file);
     }
 
     @GetMapping("/resume/{studentId}")

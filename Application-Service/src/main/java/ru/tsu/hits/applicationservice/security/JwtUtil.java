@@ -56,4 +56,9 @@ public class JwtUtil {
                 .map(obj -> new SimpleGrantedAuthority((String) obj))
                 .collect(Collectors.toList());
     }
+
+    public String getUserIdFromJwtToken(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
+        return claims.get("userId", String.class);  // Extract the user ID claim
+    }
 }

@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.companyservice.dto.CreateUpdatePositionDto;
 import ru.tsu.hits.companyservice.dto.PositionDto;
@@ -78,6 +79,7 @@ public class PositionController {
 
     @PutMapping("/{id}/decrementPlacesLeft")
     @Operation(summary = "Decrement the number of places left for a position")
+    @PreAuthorize("hasRole('TRUSTED_SERVICE')")
     public void decrementPlacesLeft(@PathVariable String id) {
         logger.info("Decrementing the number of places left for position with ID {}", id);
         positionService.decrementPlacesLeft(id);

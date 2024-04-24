@@ -1,6 +1,5 @@
 package ru.tsu.hits.curatorservice.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,18 +32,18 @@ public class CuratorService {
     }
 
     @Transactional(readOnly = true)
-    public CuratorDto getCuratorById(String id, HttpServletRequest request) {
+    public CuratorDto getCuratorById(String id) {
         CuratorEntity curatorEntity = curatorRepository.findById(id)
                 .orElseThrow(() -> new CuratorNotFoundException(id));
 
-        return curatorDtoConverter.convertEntityToDto(curatorEntity, request);
+        return curatorDtoConverter.convertEntityToDto(curatorEntity);
     }
 
     @Transactional(readOnly = true)
-    public List<CuratorDto> getAllCurators(HttpServletRequest request) {
+    public List<CuratorDto> getAllCurators() {
         List<CuratorEntity> curatorEntities = curatorRepository.findAll();
         return curatorEntities.stream()
-                .map(curatorEntity -> curatorDtoConverter.convertEntityToDto(curatorEntity, request))
+                .map(curatorDtoConverter::convertEntityToDto)
                 .collect(Collectors.toList());
     }
 
@@ -76,11 +75,11 @@ public class CuratorService {
 
     //Would require some refactoring later (make a method in the repository to find curators by companyId
     @Transactional(readOnly = true)
-    public List<CuratorDto> getCuratorsByCompanyId(String companyId, HttpServletRequest request) {
+    public List<CuratorDto> getCuratorsByCompanyId(String companyId) {
         List<CuratorEntity> curatorEntities = curatorRepository.findCuratorEntitiesByCompanyIdsContaining(companyId);
 
         return curatorEntities.stream()
-                .map(curatorEntity -> curatorDtoConverter.convertEntityToDto(curatorEntity, request))
+                .map(curatorDtoConverter::convertEntityToDto)
                 .collect(Collectors.toList());
     }
 }

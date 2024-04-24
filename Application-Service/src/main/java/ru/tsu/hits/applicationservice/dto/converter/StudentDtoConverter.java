@@ -1,6 +1,5 @@
 package ru.tsu.hits.applicationservice.dto.converter;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.tsu.hits.applicationservice.dto.ApplicationDto;
@@ -18,11 +17,11 @@ public class StudentDtoConverter {
     private static final ModelMapper modelMapper = new ModelMapper();
     private static final WebClient webClient = WebClient.builder().build();
 
-    public static StudentDto convertEntityToDto(StudentProfile student, HttpServletRequest request) {
+    public static StudentDto convertEntityToDto(StudentProfile student) {
         StudentDto dto = modelMapper.map(student, StudentDto.class);
         List<ApplicationEntity> applications = student.getApplications();
         List<ApplicationDto> applicationList = applications.stream()
-                .map(applicationEntity -> ApplicationDtoConverter.convertEntityToDto(applicationEntity, request))
+                .map(ApplicationDtoConverter::convertEntityToDto)
                 .collect(Collectors.toList());
 
         dto.setApplications(applicationList);

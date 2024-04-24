@@ -37,6 +37,8 @@ public class PositionEntity {
     @JoinColumn(name = "company_id")
     private CompanyEntity company;
 
+    private String searchPeriodId;
+
     @PrePersist
     public void prePersist() {
         this.numberOfPlacesLeft = this.numberOfPlaces;
