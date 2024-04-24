@@ -2,6 +2,8 @@ package ru.tsu.hits.applicationservice.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +21,8 @@ import ru.tsu.hits.applicationservice.repository.StudentRepository;
 import ru.tsu.hits.applicationservice.security.CustomPrincipal;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -41,15 +42,13 @@ public class StudentService {
     }
 
     @Transactional(readOnly = true)
-    public List<StudentDto> getAllStudents() {
-        return studentRepository.findAll()
-                .stream()
-                .map(StudentDtoConverter::convertEntityToDto)
-                .collect(Collectors.toList());
+    public Page<StudentDto> getAllStudents(Pageable pageable) {
+        Page<StudentProfile> students = studentRepository.findAll(pageable);
+        return students.map(StudentDtoConverter::convertEntityToDto);
     }
 
     @Transactional(readOnly = true)
-    public List<StudentDto> getStudentsByCompanyId(String companyId) {
+    public Page<StudentDto> getStudentsByCompanyId(String companyId, Pageable pageable) {
 
         List<String> positionIds = webClientBuilder.build()
                 .get()
@@ -61,14 +60,12 @@ public class StudentService {
                 .block();
 
         if (positionIds == null || positionIds.isEmpty()) {
-            return Collections.emptyList();
+            return Page.empty(pageable);
         }
 
-        List<StudentProfile> students = studentRepository.findByApplications_PositionIdIn(positionIds);
+        Page<StudentProfile> students = studentRepository.findByApplications_PositionIdIn(positionIds, pageable);
 
-        return students.stream()
-                .map(StudentDtoConverter::convertEntityToDto)
-                .collect(Collectors.toList());
+        return students.map(StudentDtoConverter::convertEntityToDto);
     }
 
     @Transactional(readOnly = true)
@@ -167,5 +164,10 @@ public class StudentService {
         StudentProfile student = getStudentById(id);
         student.getTechnologyIds().removeAll(technologies);
         studentRepository.save(student);
+    }
+
+    public Page<StudentDto> getStudentsByIds(Set<String> studentIds, Pageable pageable) {
+        Page<StudentProfile> studentProfiles = studentRepository.findByIdIn(studentIds, pageable);
+        return studentProfiles.map(StudentDtoConverter::convertEntityToDto);
     }
 }

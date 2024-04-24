@@ -2,6 +2,10 @@ package ru.tsu.hits.applicationservice.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,6 +13,8 @@ import ru.tsu.hits.applicationservice.dto.StudentDto;
 import ru.tsu.hits.applicationservice.service.StudentService;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/students")
@@ -24,13 +30,41 @@ public class StudentController {
     }
 
     @GetMapping()
-    public List<StudentDto> getAllStudents() {
-        return studentService.getAllStudents();
+    public Page<StudentDto> getAllStudents(@RequestParam Optional<Integer> page,
+                                           @RequestParam Optional<Integer> size,
+                                           @RequestParam Optional<String> sort) {
+        Pageable pageable = PageRequest.of(
+                page.orElse(0), // Default page number
+                size.orElse(25), // Default page size
+                Sort.by(sort.orElse("id")).descending() // Default sort property
+        );
+        return studentService.getAllStudents(pageable);
     }
 
     @GetMapping("/byCompany/{companyId}")
-    public List<StudentDto> getStudentsByCompanyId(@PathVariable String companyId) {
-        return studentService.getStudentsByCompanyId(companyId);
+    public Page<StudentDto> getStudentsByCompanyId(@PathVariable String companyId,
+                                                   @RequestParam Optional<Integer> page,
+                                                   @RequestParam Optional<Integer> size,
+                                                   @RequestParam Optional<String> sort) {
+        Pageable pageable = PageRequest.of(
+                page.orElse(0), // Default page number
+                size.orElse(25), // Default page size
+                Sort.by(sort.orElse("id")).descending() // Default sort property
+        );
+        return studentService.getStudentsByCompanyId(companyId, pageable);
+    }
+
+    @PostMapping("/byIds")
+    public Page<StudentDto> getStudentsByIds(@RequestBody Set<String> studentIds,
+                                             @RequestParam Optional<Integer> page,
+                                             @RequestParam Optional<Integer> size,
+                                             @RequestParam Optional<String> sort) {
+        Pageable pageable = PageRequest.of(
+                page.orElse(0), // Default page number
+                size.orElse(25), // Default page size
+                Sort.by(sort.orElse("id")).descending() // Default sort property
+        );
+        return studentService.getStudentsByIds(studentIds, pageable);
     }
 
     @GetMapping("/{id}")
