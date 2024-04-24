@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.companyservice.dto.CreateUpdatePositionDto;
 import ru.tsu.hits.companyservice.dto.PositionDto;
+import ru.tsu.hits.companyservice.dto.UpdateSearchPeriodRequest;
 import ru.tsu.hits.companyservice.service.PositionService;
 
 import java.util.Optional;
@@ -83,6 +84,22 @@ public class PositionController {
     public void decrementPlacesLeft(@PathVariable String id) {
         logger.info("Decrementing the number of places left for position with ID {}", id);
         positionService.decrementPlacesLeft(id);
+    }
+
+    @PatchMapping("/{id}/updateSearchPeriod")
+    public PositionDto updatePositionSearchPeriod(@PathVariable String id, @RequestBody UpdateSearchPeriodRequest request) {
+        logger.info("Adding search period to position with ID {}", id);
+        return positionService.updateSearchPeriod(id, request.getSearchPeriodId());
+    }
+
+    @GetMapping("/bySearchPeriod/{searchPeriodId}")
+    public Page<PositionDto> getPositionsBySearchPeriodId(@PathVariable String searchPeriodId,
+                                                          @RequestParam Optional<Integer> page,
+                                                          @RequestParam Optional<Integer> size,
+                                                          @RequestParam Optional<String> sort) {
+        logger.info("Fetching positions by search period ID {}", searchPeriodId);
+        Pageable pageable = PageRequest.of(page.orElse(0), size.orElse(25), Sort.by(sort.orElse("companyId")).descending());
+        return positionService.getPositionsBySearchPeriodId(searchPeriodId, pageable);
     }
 }
 

@@ -78,5 +78,18 @@ public class PositionService {
     private PositionEntity updatePositionEntity(PositionEntity existingPosition, CreateUpdatePositionDto dto) {
         return dtoConverter.updateEntityFromDto(existingPosition, dto);
     }
+
+    public PositionDto updateSearchPeriod(String id, String searchPeriodId) {
+        PositionEntity position = positionRepository.findById(id)
+                .orElseThrow(() -> new PositionNotFoundException("Position not found with ID: " + id));
+        position.setSearchPeriodId(searchPeriodId);
+        PositionEntity updatedPosition = positionRepository.save(position);
+        return dtoConverter.convertToDto(updatedPosition);
+    }
+
+    public Page<PositionDto> getPositionsBySearchPeriodId(String searchPeriodId, Pageable pageable) {
+        return positionRepository.findAllBySearchPeriodId(searchPeriodId, pageable)
+                .map(dtoConverter::convertToDto);
+    }
 }
 

@@ -7,4 +7,5 @@ import ru.tsu.hits.companyservice.model.PositionEntity;
 
 public interface PositionRepository extends JpaRepository<PositionEntity, String> {
     Page<PositionEntity> findAllByCompanyId(String companyId, Pageable pageable);
+    Page<PositionEntity> findAllBySearchPeriodId(String searchPeriodId, Pageable pageable);
 }

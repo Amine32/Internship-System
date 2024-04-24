@@ -25,5 +25,6 @@ public class PositionDto {
     private LocalDateTime updatedAt;
     private String companyName;
     private String companyId;
+    private String searchPhaseId;
 }
 

@@ -99,7 +99,21 @@ public class PositionDtoConverter {
         CompanyEntity companyEntity = sharedService.fetchCompanyEntity(dto.getCompanyId());
         entity.setCompany(companyEntity);
 
+        // Fetch current active search period ID
+        String searchPeriodId = fetchCurrentActiveSearchPeriodId();
+        entity.setSearchPeriodId(searchPeriodId);
+
         return entity;
+    }
+
+    private String fetchCurrentActiveSearchPeriodId() {
+        return webClientBuilder.build()
+                .get()
+                .uri("http://localhost:8080/season-service/api/searchPeriods/currentActiveId")
+                .header("Service-Name", "Season-Service")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
     }
 
     public PositionEntity updateEntityFromDto(PositionEntity entity, CreateUpdatePositionDto dto) {
