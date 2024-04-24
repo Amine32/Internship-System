@@ -1,6 +1,5 @@
 package ru.tsu.hits.companyservice.dto.converter;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -20,13 +19,13 @@ public class CompanyDtoConverter {
     private static final ModelMapper modelMapper = new ModelMapper();
     private final PositionDtoConverter positionDtoConverter;
 
-    public CompanyDto convertToDto(CompanyEntity entity, HttpServletRequest request) {
+    public CompanyDto convertToDto(CompanyEntity entity) {
         CompanyDto dto = modelMapper.map(entity, CompanyDto.class);
 
         if (entity.getPositions() != null) {
             // Convert each PositionEntity to PositionDto
             List<PositionDto> positionDtos = entity.getPositions().stream()
-                    .map(positionEntity -> positionDtoConverter.convertToDto(positionEntity, request))
+                    .map(positionDtoConverter::convertToDto)
                     .collect(Collectors.toList());
 
             dto.setPositions(positionDtos);

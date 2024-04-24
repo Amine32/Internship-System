@@ -1,9 +1,7 @@
 package ru.tsu.hits.companyservice.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
@@ -16,11 +14,8 @@ public class ApplicationCountService {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationCountService.class);
 
-    public int fetchApplicationCountFromMicroservice(String positionId, HttpServletRequest request) {
+    public int fetchApplicationCountFromMicroservice(String positionId) {
         int numberOfApplications = 0; // Default value
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", request.getHeader("Authorization"));
 
         WebClient webClient = WebClient.builder().build();
 
@@ -28,7 +23,7 @@ public class ApplicationCountService {
             Integer currentNumberOfApplications = webClient
                     .get()
                     .uri("http://localhost:8080/application-service/api/applications/position/{positionId}/count", positionId)
-                    .headers(httpHeaders -> httpHeaders.addAll(headers))
+                    .header("Service-Name", "Loan-Service")
                     .retrieve()
                     .bodyToMono(Integer.class)
                     .block();

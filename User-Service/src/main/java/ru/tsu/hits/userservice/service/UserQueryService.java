@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsu.hits.userservice.dto.UserDto;
@@ -48,13 +50,9 @@ public class UserQueryService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserDto> getUsersByRole(Role role) {
-        List<UserEntity> users = userRepository.findAllByRole(role);
-        List<UserDto> result = new ArrayList<>();
-
-        users.forEach(element -> result.add(UserDtoConverter.convertEntityToDto(element)));
-
-        return result;
+    public Page<UserDto> getUsersByRole(Role role, Pageable pageable) {
+        return userRepository.findAllByRolesContains(role, pageable)
+                .map(UserDtoConverter::convertEntityToDto);
     }
 
     @Transactional(readOnly = true)

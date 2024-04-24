@@ -1,6 +1,5 @@
 package ru.tsu.hits.companyservice.dto.converter;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
@@ -38,7 +37,7 @@ public class PositionDtoConverter {
     private final SharedService sharedService;
     private final ApplicationCountService applicationCountService;
 
-    public PositionDto convertToDto(PositionEntity entity, HttpServletRequest request) {
+    public PositionDto convertToDto(PositionEntity entity) {
         PositionDto dto = modelMapper.map(entity, PositionDto.class);
 
         WebClient webClient = webClientBuilder.build();
@@ -84,7 +83,7 @@ public class PositionDtoConverter {
         }
 
         //Fetch numberOfApplications
-        int numberOfApplications = applicationCountService.fetchApplicationCountFromMicroservice(entity.getId(), request);
+        int numberOfApplications = applicationCountService.fetchApplicationCountFromMicroservice(entity.getId());
         dto.setNumberOfApplications(numberOfApplications);
 
         return dto;

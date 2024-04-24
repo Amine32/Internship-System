@@ -1,6 +1,8 @@
 package ru.tsu.hits.userservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsu.hits.userservice.dto.GroupDto;
@@ -62,14 +64,9 @@ public class GroupService {
     }
 
     @Transactional(readOnly = true)
-    public List<GroupDto> getAllGroups() {
-        List<GroupEntity> groups = groupRepository.findAll();
-
-        List<GroupDto> result = new ArrayList<>();
-
-        groups.forEach(element -> result.add(GroupDtoConverter.convertEntityToDto(element)));
-
-        return result;
+    public Page<GroupDto> getAllGroups(Pageable pageable) {
+        return groupRepository.findAll(pageable)
+                .map(GroupDtoConverter::convertEntityToDto);
     }
 
     @Transactional(readOnly = true)

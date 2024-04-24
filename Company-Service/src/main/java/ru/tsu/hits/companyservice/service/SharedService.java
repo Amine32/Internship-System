@@ -16,5 +16,4 @@ public class SharedService {
         return companyRepository.findById(id)
                 .orElseThrow(() -> new CompanyNotFoundException("Company not found"));
     }
-
 }

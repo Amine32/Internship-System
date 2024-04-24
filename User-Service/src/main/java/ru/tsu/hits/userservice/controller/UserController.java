@@ -4,6 +4,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.userservice.dto.CreateUserDto;
 import ru.tsu.hits.userservice.dto.UpdateUserDto;
@@ -13,7 +17,7 @@ import ru.tsu.hits.userservice.model.Role;
 import ru.tsu.hits.userservice.service.UserCommandService;
 import ru.tsu.hits.userservice.service.UserQueryService;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -35,8 +39,12 @@ public class UserController {
     }
 
     @GetMapping("/roles/{role}")
-    public List<UserDto> getUsersByRole(@PathVariable String role) {
-        return userQueryService.getUsersByRole(Role.valueOf(role));
+    public Page<UserDto> getUsersByRole(@PathVariable String role,
+                                        @RequestParam Optional<Integer> page,
+                                        @RequestParam Optional<Integer> size,
+                                        @RequestParam Optional<String> sort) {
+        Pageable pageable = PageRequest.of(page.orElse(0), size.orElse(25), Sort.by(sort.orElse("id")));
+        return userQueryService.getUsersByRole(Role.valueOf(role), pageable);
     }
 
     @GetMapping("/jwt")

@@ -1,8 +1,9 @@
 package ru.tsu.hits.companyservice.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.tsu.hits.companyservice.dto.CompanyDto;
 import ru.tsu.hits.companyservice.dto.CreateUpdateCompanyDto;
@@ -22,29 +23,27 @@ public class CompanyService {
     private final CompanyDtoConverter dtoConverter;
     private final SharedService sharedService;
 
-    public CompanyDto createCompany(CreateUpdateCompanyDto dto, HttpServletRequest request) {
+    public CompanyDto createCompany(CreateUpdateCompanyDto dto) {
         log.info("Creating new company");
-        return saveAndConvertToDto(dtoConverter.convertToEntity(dto), request);
+        return saveAndConvertToDto(dtoConverter.convertToEntity(dto));
     }
 
-    public CompanyDto getCompanyById(String id, HttpServletRequest request) {
+    public CompanyDto getCompanyById(String id) {
         log.info("Fetching company with id: {}", id);
-        return dtoConverter.convertToDto(sharedService.fetchCompanyEntity(id), request);
+        return dtoConverter.convertToDto(sharedService.fetchCompanyEntity(id));
     }
 
-    public List<CompanyDto> getAllCompanies(HttpServletRequest request) {
+    public Page<CompanyDto> getAllCompanies(Pageable pageable) {
         log.info("Fetching all companies");
-        return companyRepository.findAll()
-                .stream()
-                .map(entity -> dtoConverter.convertToDto(entity, request))
-                .collect(Collectors.toList());
+        return companyRepository.findAll(pageable)
+                .map(dtoConverter::convertToDto);
     }
 
-    public CompanyDto updateCompany(String id, CreateUpdateCompanyDto dto, HttpServletRequest request) {
+    public CompanyDto updateCompany(String id, CreateUpdateCompanyDto dto) {
         log.info("Updating company with id: {}", id);
         CompanyEntity existingCompany = sharedService.fetchCompanyEntity(id);
         updateCompanyEntity(existingCompany, dto);
-        return saveAndConvertToDto(existingCompany, request);
+        return saveAndConvertToDto(existingCompany);
     }
 
     public void deleteCompany(String id) {
@@ -52,8 +51,8 @@ public class CompanyService {
         companyRepository.delete(sharedService.fetchCompanyEntity(id));
     }
 
-    private CompanyDto saveAndConvertToDto(CompanyEntity entity, HttpServletRequest request) {
-        return dtoConverter.convertToDto(companyRepository.save(entity), request);
+    private CompanyDto saveAndConvertToDto(CompanyEntity entity) {
+        return dtoConverter.convertToDto(companyRepository.save(entity));
     }
 
     private void updateCompanyEntity(CompanyEntity existingCompany, CreateUpdateCompanyDto dto) {

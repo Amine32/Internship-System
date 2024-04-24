@@ -3,6 +3,7 @@ package ru.tsu.hits.applicationservice.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.applicationservice.dto.ApplicationDto;
 import ru.tsu.hits.applicationservice.dto.ApplicationPriorityDto;
@@ -44,6 +45,7 @@ public class ApplicationController {
     }
 
     @GetMapping("position/{positionId}/count")
+    @PreAuthorize("hasRole('TRUSTED_SERVICE')")
     public Integer getCountByPositionId(@PathVariable String positionId) {
         return applicationService.getCountByPositionId(positionId);
     }

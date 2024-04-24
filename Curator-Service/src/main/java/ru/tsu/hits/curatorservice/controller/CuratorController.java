@@ -29,9 +29,8 @@ public class CuratorController {
 
     @GetMapping
     @Operation(summary = "Get all curators")
-    public ResponseEntity<List<CuratorDto>> getAllCurators(HttpServletRequest request) {
-        List<CuratorDto> curators = curatorService.getAllCurators(request);
-        return new ResponseEntity<>(curators, HttpStatus.OK);
+    public List<CuratorDto> getAllCurators(HttpServletRequest request) {
+        return curatorService.getAllCurators(request);
     }
 
     @GetMapping("/{id}")
@@ -61,8 +60,7 @@ public class CuratorController {
 
     @GetMapping("/companies/{companyId}")
     @Operation(summary = "Get curators by company id")
-    public ResponseEntity<List<CuratorDto>> getCuratorsByCompanyId(@PathVariable String companyId, HttpServletRequest request) {
-        List<CuratorDto> curators = curatorService.getCuratorsByCompanyId(companyId, request);
-        return new ResponseEntity<>(curators, HttpStatus.OK);
+    public List<CuratorDto> getCuratorsByCompanyId(@PathVariable String companyId, HttpServletRequest request) {
+        return curatorService.getCuratorsByCompanyId(companyId, request);
     }
 }
