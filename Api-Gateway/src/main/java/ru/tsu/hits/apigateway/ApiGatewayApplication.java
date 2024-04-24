@@ -37,6 +37,10 @@ public class ApiGatewayApplication {
                         .path("/curator-service/**")
                         .filters(f -> f.stripPrefix(1))
                         .uri("http://localhost:8085"))
+                .route(p -> p
+                        .path("/season-service/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("http://localhost:8086"))
                 .build();
     }
 }
