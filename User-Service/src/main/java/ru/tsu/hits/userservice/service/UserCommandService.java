@@ -14,6 +14,9 @@ import ru.tsu.hits.userservice.model.Role;
 import ru.tsu.hits.userservice.model.UserEntity;
 import ru.tsu.hits.userservice.repository.UserRepository;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class UserCommandService {
@@ -59,9 +62,9 @@ public class UserCommandService {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String jwtToken = authHeader.substring(7);
-            if (user.getRole() == Role.STUDENT) {
+            if (user.getRoles().contains(Role.STUDENT)) {
                 userNotificationService.notifyStudentDeletion(id, jwtToken);
-            } else if (user.getRole() == Role.CURATOR) {
+            } else if (user.getRoles().contains(Role.CURATOR)) {
                 userNotificationService.notifyCuratorDeletion(id, jwtToken);
             }
         }
@@ -78,23 +81,26 @@ public class UserCommandService {
         UserSecurityDto dto = new UserSecurityDto();
         dto.setEmail(user.getEmail());
         dto.setPassword(user.getPassword());
-        dto.setRole(user.getRole().name());
+        dto.setRoles(user.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
 
         return dto;
     }
 
     private UserEntity createUserEntity(CreateUserDto dto) {
         UserEntity userEntity = UserDtoConverter.convertDtoToEntity(dto);
-        userEntity.setRole(Role.valueOf(dto.getRole()));
+        Set<Role> roles = dto.getRoles().stream()
+                .map(Role::valueOf)
+                .collect(Collectors.toSet());
+        userEntity.setRoles(roles);
         userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
         return userEntity;
     }
 
     private UserDto saveAndNotify(UserEntity userEntity) {
         userEntity = userRepository.save(userEntity);
-        if (userEntity.getRole() == Role.STUDENT) {
+        if (userEntity.getRoles().contains(Role.STUDENT)) {
             userNotificationService.notifyStudentService(userEntity);
-        } else if (userEntity.getRole() == Role.CURATOR) {
+        } else if (userEntity.getRoles().contains(Role.CURATOR)) {
             userNotificationService.notifyCuratorService(userEntity);
         }
         return UserDtoConverter.convertEntityToDto(userEntity);

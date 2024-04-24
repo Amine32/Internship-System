@@ -37,7 +37,7 @@ public class UserValidationService {
     }
 
     public void validateUserForCompanyAddition(UserEntity user) {
-        if (user.getRole() != Role.COMPANY) {
+        if (!user.getRoles().contains(Role.COMPANY)) {
             throw new WrongRoleException("User does not have COMPANY role");
         }
     }

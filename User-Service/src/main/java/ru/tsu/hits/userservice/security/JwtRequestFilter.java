@@ -1,7 +1,10 @@
 package ru.tsu.hits.userservice.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
@@ -12,8 +15,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.tsu.hits.userservice.exception.JwtTokenExpiredException;
+import ru.tsu.hits.userservice.exception.JwtTokenMalformedException;
 
-import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -23,21 +27,35 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain) {
 
-        String jwt = getJwtFromRequest(request);
+        try {
+            String jwt = getJwtFromRequest(request);
 
-        if (StringUtils.hasText(jwt) && jwtUtil.validateJwtToken(jwt)) {
-            String username = jwtUtil.getUserNameFromJwtToken(jwt);
-            List<SimpleGrantedAuthority> authorities = jwtUtil.getAuthoritiesFromJwtToken(jwt);
+            if (StringUtils.hasText(jwt) && jwtUtil.validateJwtToken(jwt)) {
+                String username = jwtUtil.getUserNameFromJwtToken(jwt);
+                List<SimpleGrantedAuthority> authorities = jwtUtil.getAuthoritiesFromJwtToken(jwt);
 
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    username, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        username, null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
+            chain.doFilter(request, response);
+        } catch (JwtException e) {
+            if (e instanceof ExpiredJwtException) {
+                throw new JwtTokenExpiredException("JWT Token has expired");
+            } else if (e instanceof MalformedJwtException) {
+                throw new JwtTokenMalformedException("Invalid JWT token");
+            } else if (e instanceof SignatureException) {
+                throw new JwtTokenMalformedException("JWT signature does not match locally computed signature");
+            } else {
+                throw new JwtTokenMalformedException("Invalid JWT token");
+            }
+        } catch (Exception e) {
+            // This block catches any other exception that could occur.
+            throw new JwtTokenMalformedException("Error processing JWT token: " + e.getMessage());
         }
-
-        chain.doFilter(request, response);
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {

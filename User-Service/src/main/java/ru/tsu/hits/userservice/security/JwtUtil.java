@@ -1,9 +1,6 @@
 package ru.tsu.hits.userservice.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
+import ru.tsu.hits.userservice.exception.JwtTokenExpiredException;
+import ru.tsu.hits.userservice.exception.JwtTokenMalformedException;
 
 import java.security.Key;
 import java.util.Base64;
@@ -80,10 +79,13 @@ public class JwtUtil {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(authToken);
             return true;
+        } catch (ExpiredJwtException e) {
+            throw new JwtTokenExpiredException("JWT Token has expired");
+        } catch (MalformedJwtException e) {
+            throw new JwtTokenMalformedException("Invalid JWT token");
         } catch (Exception e) {
-            // Log token validation error
+            throw new JwtTokenMalformedException("Error processing JWT token: " + e.getMessage());
         }
-        return false;
     }
 }
 
