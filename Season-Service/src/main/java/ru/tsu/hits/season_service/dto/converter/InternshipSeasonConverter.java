@@ -35,7 +35,7 @@ public class InternshipSeasonConverter {
 
     private Mono<JsonNode> fetchStudents(Set<String> studentIds) {
         return webClient.post()
-                .uri("http://localhost:8080/application-service/api/students/getDetails")
+                .uri("http://localhost:8080/application-service/api/students/byIds")
                 .header("Service-Name", "Season-Service")
                 .bodyValue(studentIds)
                 .retrieve()

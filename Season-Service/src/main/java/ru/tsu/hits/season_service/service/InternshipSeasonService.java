@@ -28,7 +28,7 @@ public class InternshipSeasonService {
 
     public InternshipSeasonDto getInternshipSeasonById(String id) {
         InternshipSeasonEntity entity = seasonRepository.findById(id)
-                .orElseThrow(() -> new InternshipSeasonNotFoundException("Internship season not found"));  // Consider creating a custom exception
+                .orElseThrow(() -> new InternshipSeasonNotFoundException("Internship season not found"));
         return seasonConverter.convertToDto(entity);
     }
 

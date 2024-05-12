@@ -22,13 +22,15 @@ public class IpAuthenticationFilter extends GenericFilterBean {
     private static final Set<String> trustedIps = new HashSet<>(List.of("127.0.0.1", "192.168.1.100"));
 
     @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+            throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) req;
         String remoteIp = httpRequest.getRemoteAddr();
         String serviceName = httpRequest.getHeader("Service-Name");
 
         if (trustedIps.contains(remoteIp) && serviceName != null) {
-            Authentication auth = new UsernamePasswordAuthenticationToken("internalService", null, List.of(() -> "ROLE_TRUSTED_SERVICE"));
+            Authentication auth = new UsernamePasswordAuthenticationToken
+                    (serviceName, null, List.of(() -> "ROLE_TRUSTED_SERVICE"));
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
 
