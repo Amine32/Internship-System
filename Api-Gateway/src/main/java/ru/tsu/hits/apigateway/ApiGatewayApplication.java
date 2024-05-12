@@ -41,6 +41,14 @@ public class ApiGatewayApplication {
                         .path("/season-service/**")
                         .filters(f -> f.stripPrefix(1))
                         .uri("http://localhost:8086"))
+                .route(p -> p
+                        .path("/practice-service/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("http://localhost:8087"))
+                .route(p -> p
+                        .path("/document-service/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("http://localhost:8088"))
                 .build();
     }
 }
