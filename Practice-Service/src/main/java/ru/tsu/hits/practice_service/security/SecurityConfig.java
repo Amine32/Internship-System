@@ -28,8 +28,7 @@ public class SecurityConfig {
                 .addFilterBefore(ipAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**", "/v2/**", "/swagger-resources/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/students/{id}").permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // allow CORS preflight requests
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
