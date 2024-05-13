@@ -1,4 +1,4 @@
-package ru.tsu.hits.application_service.dto;
+package ru.tsu.hits.userservice.dto;
 
 import lombok.Getter;
 import lombok.Setter;
