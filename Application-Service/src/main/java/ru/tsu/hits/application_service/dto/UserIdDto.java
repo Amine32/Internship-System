@@ -1,0 +1,10 @@
+package ru.tsu.hits.application_service.dto;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class UserIdDto {
+    private String userId;
+}

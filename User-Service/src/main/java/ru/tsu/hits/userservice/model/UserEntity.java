@@ -33,9 +33,5 @@ public class UserEntity {
     @Column(name = "role")
     private Set<Role> roles = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id")
-    private GroupEntity group;
-
     private String companyId;
 }
