@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.tsu.hits.userservice.dto.JwtRequest;
 import ru.tsu.hits.userservice.dto.JwtResponse;
-import ru.tsu.hits.userservice.security.JwtUtil;
+import ru.tsu.hits.userservice.security.UserJwtUtil;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,7 +23,7 @@ import ru.tsu.hits.userservice.security.JwtUtil;
 public class JwtAuthenticationController {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtTokenUtil;
+    private final UserJwtUtil jwtTokenUtil;
 
     @PostMapping
     public JwtResponse createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
