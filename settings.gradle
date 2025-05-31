@@ -1,0 +1,13 @@
+rootProject.name = 'Internship-System'
+
+include 'Internship-Common'
+include 'Internship-Security'
+include 'Company-Service'
+include 'Application-Service'
+include 'User-Service'
+include 'Api-Gateway'
+include 'Stack-Service'
+include 'Curator-Service'
+include 'Practice-Service'
+include 'Document-Service'
+include 'Season-Service'

@@ -1,0 +1,26 @@
+plugins {
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+    id 'java'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+dependencies {
+    // Core Gateway dependencies - minimal setup
+    implementation libs.spring.cloud.starter.gateway
+    implementation libs.spring.boot.starter.actuator
+
+    // For Swagger aggregation
+    implementation libs.spring.boot.starter.webflux
+
+    implementation libs.springdoc.webflux
+}
+
+bootJar {
+    enabled = true
+}

@@ -18,7 +18,7 @@ import ru.tsu.hits.application_service.dto.converter.StudentDtoConverter;
 import ru.tsu.hits.application_service.exception.StudentNotFoundException;
 import ru.tsu.hits.application_service.model.StudentEntity;
 import ru.tsu.hits.application_service.repository.StudentRepository;
-import ru.tsu.hits.application_service.security.CustomPrincipal;
+import ru.tsu.hits.internship.security.CustomPrincipal;
 
 import java.io.IOException;
 import java.util.List;

@@ -1,0 +1,47 @@
+[versions]
+# Spring
+spring-boot = "3.5.0"
+"spring-security" = "6.5.0"
+spring-dependency-management = "1.1.7"
+spring-cloud = "4.3.0"
+
+# Libraries
+lombok = "1.18.38"
+postgresql = "42.7.6"
+springdoc-openapi = "2.8.8"
+modelmapper = "3.2.3"
+jjwt = "0.12.6"
+jakarta-validation-api = "3.1.1"
+hibernate-validator = "9.0.0.Final"
+commons-csv = "1.14.0"
+
+[libraries]
+# Spring dependencies
+spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa", version.ref = "spring-boot" }
+spring-boot-starter-security = { group = "org.springframework.boot", name = "spring-boot-starter-security", version.ref = "spring-boot" }
+spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web", version.ref = "spring-boot" }
+spring-boot-starter-webflux = { group = "org.springframework.boot", name = "spring-boot-starter-webflux", version.ref = "spring-boot" }
+spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test", version.ref = "spring-boot" }
+spring-boot-starter-amqp = { group = "org.springframework.boot", name = "spring-boot-starter-amqp", version.ref = "spring-boot" }
+spring-boot-starter-actuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator", version.ref = "spring-boot" }
+spring-cloud-starter-gateway = { group = "org.springframework.cloud", name = "spring-cloud-starter-gateway", version.ref = "spring-cloud" }
+spring-security-test = { group = "org.springframework.security", name = "spring-security-test", version.ref = "spring-security" }
+
+# Other dependencies
+springdoc-openapi = { group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
+springdoc-webflux = { group = "org.springdoc", name = "springdoc-openapi-starter-webflux-ui", version.ref = "springdoc-openapi" }
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
+modelmapper = { group = "org.modelmapper", name = "modelmapper", version.ref = "modelmapper" }
+jakarta-validation-api = { group = "jakarta.validation", name = "jakarta.validation-api", version.ref = "jakarta-validation-api" }
+hibernate-validator = { group = "org.hibernate.validator", name = "hibernate-validator", version.ref = "hibernate-validator" }
+commons-csv = { group = "org.apache.commons", name = "commons-csv", version.ref = "commons-csv" }
+
+# JWT
+jjwt-api = { group = "io.jsonwebtoken", name = "jjwt-api", version.ref = "jjwt" }
+jjwt-impl = { group = "io.jsonwebtoken", name = "jjwt-impl", version.ref = "jjwt" }
+jjwt-jackson = { group = "io.jsonwebtoken", name = "jjwt-jackson", version.ref = "jjwt" }
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }

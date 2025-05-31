@@ -1,8 +1,9 @@
 HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
 
 ### STS ###
 .apt_generated

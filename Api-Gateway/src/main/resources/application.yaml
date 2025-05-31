@@ -1,23 +1,52 @@
+server:
+  port: 8080
+
 spring:
+  application:
+    name: api-gateway
+
   cloud:
     gateway:
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins:
-              - 'http://localhost:3000'
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-              - PATCH
-            allowedHeaders: '*'
-            allowCredentials: true
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: false
 
+# Swagger/OpenAPI aggregation configuration
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    urls:
+      - name: User Service
+        url: /user-service/v3/api-docs
+      - name: Application Service
+        url: /application-service/v3/api-docs
+      - name: Company Service
+        url: /company-service/v3/api-docs
+      - name: Stack Service
+        url: /stack-service/v3/api-docs
+      - name: Curator Service
+        url: /curator-service/v3/api-docs
+      - name: Season Service
+        url: /season-service/v3/api-docs
+      - name: Practice Service
+        url: /practice-service/v3/api-docs
+      - name: Document Service
+        url: /document-service/v3/api-docs
+
+# Actuator configuration
 management:
   endpoints:
     web:
       exposure:
-        include: env
+        include: health,info,gateway
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty: INFO

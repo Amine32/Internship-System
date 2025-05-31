@@ -1,0 +1,9 @@
+dependencies {
+    // Include the common and security modules
+    implementation project(':Internship-Common')
+    implementation project(':Internship-Security')
+
+    // Additional dependencies specific to this service
+    implementation libs.modelmapper
+    implementation libs.jakarta.validation.api
+}

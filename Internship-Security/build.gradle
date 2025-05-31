@@ -1,0 +1,27 @@
+dependencies {
+    // Include the common module
+    implementation project(':Internship-Common')
+    
+    // Spring Security
+    implementation libs.spring.boot.starter.security
+    implementation libs.spring.boot.starter.web
+    
+    // JWT
+    implementation libs.jjwt.api
+    runtimeOnly libs.jjwt.impl
+    runtimeOnly libs.jjwt.jackson
+    
+    // Lombok for reducing boilerplate
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+}
+
+// Disable bootJar since this is a library
+bootJar {
+    enabled = false
+}
+
+// Enable jar task
+jar {
+    enabled = true
+}

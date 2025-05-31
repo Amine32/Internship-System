@@ -1,0 +1,23 @@
+dependencies {
+    // Spring dependencies
+    implementation libs.spring.boot.starter.web
+    implementation libs.springdoc.openapi
+    
+    // Lombok for reducing boilerplate
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+    
+    // Validation
+    implementation libs.jakarta.validation.api
+    implementation libs.hibernate.validator
+}
+
+// Disable bootJar since this is a library
+bootJar {
+    enabled = false
+}
+
+// Enable jar task
+jar {
+    enabled = true
+}
